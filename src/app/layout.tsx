@@ -24,9 +24,7 @@ export const metadata: Metadata = {
     siteName: "JCI Laghzez Football",
     images: [
       {
-        url: "/images/tournament-banner.jpg",
-        width: 1200,
-        height: 630,
+        url: "jci.jpg",
         alt: "JCI Hammem Laghzez Football Tournament Banner",
       },
     ],
@@ -35,9 +33,20 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "JCI Hammem Laghzez Ramadan Football Tournament - Live Scores & Fixtures",
     description: "Follow live scores, match updates, player stats, and standings from the JCI Laghzez Ramadan Football Tournament.",
-    images: ["/images/tournament-banner.jpg"],
+    images: ["jci.jpg"],
   },
+  applicationName: "JCI Hammem Laghzez Football",
+  authors: [{ name: "JCI Hammem Laghzez" }, { name: "Raed Elmajdoub" }],
   robots: "index, follow",
+  viewport: 'width=device-width, initial-scale=1.0',
+  referrer: 'origin',
+  generator: 'Next.js',
+  themeColor: '#000000',
+  colorScheme: 'normal',
+  verification: {
+    google: 'google3f09ff634e2ebf6c',
+  },
+  bookmarks: []
 };
 
 export default function RootLayout({
