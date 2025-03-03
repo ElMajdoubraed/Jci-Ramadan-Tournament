@@ -41,15 +41,15 @@ function GroupStage() {
   };
 
   return (
-    <div className="grid md:grid-cols-2 gap-6">
+    <div className="grid sm:grid-cols-2 gap-6 w-full max-w-6xl mx-auto px-3">
       {sortedGroups.map((group) => (
         <div key={group.name} className="overflow-hidden bg-white rounded-lg shadow-md">
           <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 p-3">
-            <h3 className="text-xl font-bold text-white">{group.name}</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-white">{group.name}</h3>
           </div>
           
-          {/* Table header */}
-          <div className="px-4 py-3 bg-emerald-50 text-xs text-emerald-800 font-medium grid grid-cols-12 gap-1">
+          {/* Desktop Table header - hidden on very small screens */}
+          <div className="hidden xs:grid px-3 sm:px-4 py-2 sm:py-3 bg-emerald-50 text-2xs xs:text-xs text-emerald-800 font-medium grid-cols-12 gap-1">
             <div className="col-span-4">Team</div>
             <div className="col-span-1 text-center">P</div>
             <div className="col-span-1 text-center">W</div>
@@ -61,46 +61,76 @@ function GroupStage() {
             <div className="col-span-1 text-center font-bold">Pts</div>
           </div>
           
-          {/* Team rows */}
+          {/* Mobile view - compact table with only essential info */}
+          <div className="xs:hidden px-3 py-2 bg-emerald-50 text-2xs font-medium grid grid-cols-8 gap-1">
+            <div className="col-span-4">Team</div>
+            <div className="col-span-1 text-center">P</div>
+            <div className="col-span-1 text-center">GD</div>
+            <div className="col-span-2 text-center font-bold">Pts</div>
+          </div>
+          
+          {/* Team rows - Desktop view */}
           <div className="divide-y divide-gray-100">
             {group.teams.map((team, index) => {
               const goalDifference = team.goalsFor - team.goalsAgainst;
               const isQualifying = index < 2;
               
               return (
-                <div 
-                  key={team.name} 
-                  className={`px-4 py-3 grid grid-cols-12 gap-1 items-center hover:bg-gray-50 ${getPositionClass(index)}`}
-                >
-                  <div className="col-span-4 font-medium flex items-center">
-                    <span className="inline-block w-5 text-center mr-2 text-xs text-gray-500">{index + 1}</span>
-                    <span className={isQualifying ? "text-emerald-700" : ""}>{team.name}</span>
-                    {index === 0 && <span className="ml-2 text-xs bg-emerald-100 text-emerald-800 px-1 rounded">Leader</span>}
+                <div key={team.name}>
+                  {/* Desktop view */}
+                  <div 
+                    className={`hidden xs:grid px-3 sm:px-4 py-2 sm:py-3 grid-cols-12 gap-1 items-center hover:bg-gray-50 ${getPositionClass(index)}`}
+                  >
+                    <div className="col-span-4 font-medium flex items-center">
+                      <span className="inline-block w-5 text-center mr-2 text-2xs xs:text-xs text-gray-500">{index + 1}</span>
+                      <span className={`truncate ${isQualifying ? "text-emerald-700" : ""}`}>{team.name}</span>
+                      {index === 0 && <span className="ml-2 text-2xs xs:text-xs bg-emerald-100 text-emerald-800 px-1 rounded">Leader</span>}
+                    </div>
+                    <div className="col-span-1 text-center text-2xs xs:text-xs">{team.played}</div>
+                    <div className="col-span-1 text-center text-2xs xs:text-xs">{team.won}</div>
+                    <div className="col-span-1 text-center text-2xs xs:text-xs">{team.drawn}</div>
+                    <div className="col-span-1 text-center text-2xs xs:text-xs">{team.lost}</div>
+                    <div className="col-span-1 text-center text-2xs xs:text-xs">{team.goalsFor}</div>
+                    <div className="col-span-1 text-center text-2xs xs:text-xs">{team.goalsAgainst}</div>
+                    <div className="col-span-1 text-center font-medium text-2xs xs:text-xs">
+                      <span className={
+                        goalDifference > 0 ? "text-emerald-600" : 
+                        goalDifference < 0 ? "text-red-600" : "text-gray-600"
+                      }>
+                        {goalDifference > 0 ? "+" : ""}{goalDifference}
+                      </span>
+                    </div>
+                    <div className="col-span-1 text-center font-bold text-2xs xs:text-xs">{team.points}</div>
                   </div>
-                  <div className="col-span-1 text-center">{team.played}</div>
-                  <div className="col-span-1 text-center">{team.won}</div>
-                  <div className="col-span-1 text-center">{team.drawn}</div>
-                  <div className="col-span-1 text-center">{team.lost}</div>
-                  <div className="col-span-1 text-center">{team.goalsFor}</div>
-                  <div className="col-span-1 text-center">{team.goalsAgainst}</div>
-                  <div className="col-span-1 text-center font-medium">
-                    <span className={
-                      goalDifference > 0 ? "text-emerald-600" : 
-                      goalDifference < 0 ? "text-red-600" : "text-gray-600"
-                    }>
-                      {goalDifference > 0 ? "+" : ""}{goalDifference}
-                    </span>
+                  
+                  {/* Mobile view - compact */}
+                  <div 
+                    className={`xs:hidden px-3 py-2 grid grid-cols-8 gap-1 items-center hover:bg-gray-50 ${getPositionClass(index)}`}
+                  >
+                    <div className="col-span-4 font-medium flex items-center overflow-hidden">
+                      <span className="inline-block w-4 text-center mr-1 text-2xs text-gray-500">{index + 1}</span>
+                      <span className={`truncate ${isQualifying ? "text-emerald-700" : ""}`}>{team.name}</span>
+                    </div>
+                    <div className="col-span-1 text-center text-2xs">{team.played}</div>
+                    <div className="col-span-1 text-center text-2xs">
+                      <span className={
+                        goalDifference > 0 ? "text-emerald-600" : 
+                        goalDifference < 0 ? "text-red-600" : "text-gray-600"
+                      }>
+                        {goalDifference > 0 ? "+" : ""}{goalDifference}
+                      </span>
+                    </div>
+                    <div className="col-span-2 text-center font-bold text-2xs">{team.points}</div>
                   </div>
-                  <div className="col-span-1 text-center font-bold">{team.points}</div>
                 </div>
               );
             })}
           </div>
           
           {/* Legend */}
-          <div className="px-4 py-2 bg-gray-50 text-xs text-gray-500 border-t border-gray-100">
+          <div className="px-3 sm:px-4 py-2 bg-gray-50 text-2xs xs:text-xs text-gray-500 border-t border-gray-100">
             <div className="flex items-center">
-              <span className="inline-block w-3 h-3 bg-emerald-500 mr-1"></span>
+              <span className="inline-block w-2 sm:w-3 h-2 sm:h-3 bg-emerald-500 mr-1"></span>
               <span>Qualification zone</span>
             </div>
           </div>
@@ -108,7 +138,7 @@ function GroupStage() {
       ))}
       
       {/* Legend for abbreviations */}
-      <div className="md:col-span-2 bg-white p-3 rounded-lg shadow text-sm text-gray-600 flex flex-wrap gap-x-6 gap-y-2">
+      <div className="sm:col-span-2 bg-white p-3 rounded-lg shadow text-2xs xs:text-xs sm:text-sm text-gray-600 flex flex-wrap gap-x-3 sm:gap-x-6 gap-y-1 sm:gap-y-2 justify-center sm:justify-start">
         <span><strong>P</strong>: Played</span>
         <span><strong>W</strong>: Won</span>
         <span><strong>D</strong>: Drawn</span>
@@ -122,4 +152,34 @@ function GroupStage() {
   );
 }
 
-export default GroupStage;
+// Add a custom breakpoint for extra small devices
+const styles = `
+  @media (min-width: 480px) {
+    .xs\\:grid {
+      display: grid;
+    }
+    .xs\\:hidden {
+      display: none;
+    }
+    .xs\\:text-xs {
+      font-size: 0.75rem;
+      line-height: 1rem;
+    }
+  }
+  
+  .text-2xs {
+    font-size: 0.65rem;
+    line-height: 1rem;
+  }
+`;
+
+function StyledGroupStage() {
+  return (
+    <>
+      <style jsx global>{styles}</style>
+      <GroupStage />
+    </>
+  );
+}
+
+export default StyledGroupStage;

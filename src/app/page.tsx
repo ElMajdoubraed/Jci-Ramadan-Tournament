@@ -68,10 +68,6 @@ function App() {
 function Matches() {
   return (
     <div className="text-center p-4">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-emerald-700 mb-2">Upcoming Matches</h2>
-        <p className="text-gray-600">View all scheduled matches of the tournament</p>
-      </div>
       <MatchesComponent />
     </div>
   );
@@ -80,10 +76,6 @@ function Matches() {
 function Standings() {
   return (
     <div className="text-center p-4">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-emerald-700 mb-2">Tournament Standings</h2>
-        <p className="text-gray-600">Current rankings of all teams</p>
-      </div>
       <StandingsComponent />
     </div>
   );
@@ -92,10 +84,6 @@ function Standings() {
 function Teams() {
   return (
     <div className="text-center p-4">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-emerald-700 mb-2">All Teams</h2>
-        <p className="text-gray-600">Participating teams and their players</p>
-      </div>
       <AllTeamsComponent />
     </div>
   );

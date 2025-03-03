@@ -377,7 +377,7 @@ function Results() {
                           <div className="text-sm text-gray-500 flex items-center justify-between">
                             <span>{goal.team}</span>
                             <span className="bg-yellow-100 text-yellow-800 px-1 rounded text-xs">
-                              {goal.minute}'
+                              {goal.minute}{"'"}
                               {goal.isPenalty && ' (P)'}
                               {goal.isOwnGoal && ' (OG)'}
                             </span>
