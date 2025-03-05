@@ -5,12 +5,11 @@ import Team from '@/models/Team';
 import mongoose from 'mongoose';
 
 export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+    request: Request,
 ) {
   try {
     await connectToDatabase();
-    const { id } = params;
+    const id = 'request.query.id;'
     const data = await request.json();
     const { teamAScore, teamBScore, teamAPlayerGoals, teamBPlayerGoals, status } = data;
     
