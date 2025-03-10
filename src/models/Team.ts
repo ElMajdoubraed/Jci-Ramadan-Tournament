@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, model, Model } from 'mongoose';
 
 // Define enum for team groups
 export enum TeamGroup {
@@ -67,5 +67,16 @@ const TeamSchema = new Schema<ITeam>({
   timestamps: true
 });
 
-// Check if model already exists (useful for Next.js hot reloading)
-export default mongoose.models.Team || mongoose.model<ITeam>('Team', TeamSchema);
+// Safe model export for Next.js environment
+let TeamModel: Model<ITeam>;
+
+try {
+  // Check if the model already exists to prevent model overwrite error
+  TeamModel = mongoose.models.Team as Model<ITeam>;
+} catch {
+  // Model doesn't exist yet, so create it
+  TeamModel = mongoose.model<ITeam>('Team', TeamSchema);
+}
+
+// Use this safer export pattern
+export default TeamModel;

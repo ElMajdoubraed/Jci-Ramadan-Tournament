@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Model, model } from 'mongoose';
 import { ITeam } from './Team';
 
 // Define enums for match status and phase
@@ -63,5 +63,8 @@ const MatchSchema = new Schema<IMatch>({
   timestamps: true
 });
 
-// Check if model already exists (useful for Next.js hot reloading)
-export default mongoose.models.Match || mongoose.model<IMatch>('Match', MatchSchema);
+// Safer model export pattern for Next.js environments
+const MatchModel = (mongoose.models?.Match as Model<IMatch>) || 
+  mongoose.model<IMatch>('Match', MatchSchema);
+
+export default MatchModel;
