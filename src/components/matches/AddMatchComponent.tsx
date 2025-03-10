@@ -83,50 +83,67 @@ export default function AddMatchComponent({ onMatchAdded }: AddMatchProps) {
     }
   };
 
+  const getPhaseLabel = (p: MatchPhase): string => {
+    switch(p) {
+      case MatchPhase.GROUP: return 'Group Stage';
+      case MatchPhase.ROUND_OF_16: return 'Round of 16';
+      case MatchPhase.QUARTER: return 'Quarter Finals';
+      case MatchPhase.SEMI: return 'Semi Finals';
+      case MatchPhase.FINAL: return 'Final';
+      default: return p;
+    }
+  };
+
   return (
-    <div className="mb-6">
+    <div className="mb-6 w-full max-w-4xl mx-auto">
       {!showForm ? (
         <button
           onClick={() => setShowForm(true)}
-          className="rounded bg-green-500 px-4 py-2 font-medium text-white hover:bg-green-600"
+          className="w-full sm:w-auto rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 font-semibold text-white shadow-lg hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
         >
-          Add New Match
+          <span className="flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 3a1 1 0 00-1 1v5H4a1 1 0 100 2h5v5a1 1 0 102 0v-5h5a1 1 0 100-2h-5V4a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            Schedule New Match
+          </span>
         </button>
       ) : (
-        <div className="rounded-lg border border-gray-200 bg-white p-5 shadow">
-          <h3 className="mb-4 text-xl font-bold">Add New Match</h3>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-sm font-medium">Date</label>
+        <div className="rounded-xl border-2 border-indigo-100 bg-white p-6 shadow-2xl transition-all duration-300 hover:shadow-indigo-100">
+          <h3 className="mb-6 text-2xl font-bold text-gradient bg-gradient-to-r from-indigo-600 to-purple-600 inline-block text-transparent bg-clip-text">Schedule a New Match</h3>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="mb-4 grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="group">
+                <label className="mb-2 block text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors duration-200">Match Date</label>
                 <input
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 p-2"
+                  className="w-full rounded-lg border border-gray-300 p-3 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all duration-200"
                   required
                 />
               </div>
               
-              <div>
-                <label className="mb-1 block text-sm font-medium">Time</label>
+              <div className="group">
+                <label className="mb-2 block text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors duration-200">Match Time</label>
                 <input
                   type="time"
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 p-2"
+                  className="w-full rounded-lg border border-gray-300 p-3 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all duration-200"
                   required
                 />
               </div>
             </div>
             
-            <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-sm font-medium">Team A</label>
+            <div className="mb-4 grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="relative group">
+                <label className="mb-2 block text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors duration-200">Team A</label>
                 <select
                   value={teamA}
                   onChange={(e) => setTeamA(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 p-2"
+                  className="w-full appearance-none rounded-lg border border-gray-300 bg-white p-3 pr-8 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all duration-200"
                   required
                 >
                   <option value="">Select Team A</option>
@@ -136,14 +153,19 @@ export default function AddMatchComponent({ onMatchAdded }: AddMatchProps) {
                     </option>
                   ))}
                 </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 top-6 flex items-center px-2 text-gray-700">
+                  <svg className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
               </div>
               
-              <div>
-                <label className="mb-1 block text-sm font-medium">Team B</label>
+              <div className="relative group">
+                <label className="mb-2 block text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors duration-200">Team B</label>
                 <select
                   value={teamB}
                   onChange={(e) => setTeamB(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 p-2"
+                  className="w-full appearance-none rounded-lg border border-gray-300 bg-white p-3 pr-8 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all duration-200"
                   required
                 >
                   <option value="">Select Team B</option>
@@ -153,41 +175,62 @@ export default function AddMatchComponent({ onMatchAdded }: AddMatchProps) {
                     </option>
                   ))}
                 </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 top-6 flex items-center px-2 text-gray-700">
+                  <svg className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
               </div>
             </div>
             
-            <div className="mb-4">
-              <label className="mb-1 block text-sm font-medium">Phase</label>
-              <select
+            <div className="mb-6 relative group">
+              <label className="mb-2 block text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors duration-200">Tournament Phase</label>
+                              <select
                 value={phase}
                 onChange={(e) => setPhase(e.target.value as MatchPhase)}
-                className="w-full rounded-md border border-gray-300 p-2"
+                className="w-full appearance-none rounded-lg border border-gray-300 bg-white p-3 pr-8 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all duration-200"
                 required
               >
                 {Object.values(MatchPhase).map((p) => (
                   <option key={p} value={p}>
-                    {p === MatchPhase.GROUP ? 'Group Stage' : 
-                     p === MatchPhase.ROUND_OF_16 ? 'Round of 16' : 
-                     p === MatchPhase.QUARTER ? 'Quarter Finals' : 
-                     p === MatchPhase.SEMI ? 'Semi Finals' : 
-                     'Final'}
+                    {getPhaseLabel(p)}
                   </option>
                 ))}
               </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 top-6 flex items-center px-2 text-gray-700">
+                <svg className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                </svg>
+              </div>
             </div>
             
-            <div className="flex space-x-2">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
               <button
                 type="submit"
                 disabled={isLoading}
-                className="rounded bg-green-500 px-4 py-2 font-medium text-white hover:bg-green-600 disabled:bg-green-300"
+                className="flex-1 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 font-semibold text-white shadow-lg hover:from-indigo-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition-all duration-200"
               >
-                {isLoading ? 'Adding...' : 'Add Match'}
+                {isLoading ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    Schedule Match
+                  </span>
+                )}
               </button>
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="rounded border border-gray-300 px-4 py-2 font-medium hover:bg-gray-50"
+                className="rounded-lg border-2 border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-opacity-50 transition-all duration-200"
               >
                 Cancel
               </button>
