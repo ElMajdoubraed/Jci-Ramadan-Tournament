@@ -67,16 +67,8 @@ const TeamSchema = new Schema<ITeam>({
   timestamps: true
 });
 
-// Safe model export for Next.js environment
-let TeamModel: Model<ITeam>;
-
-try {
-  // Check if the model already exists to prevent model overwrite error
-  TeamModel = mongoose.models.Team as Model<ITeam>;
-} catch {
-  // Model doesn't exist yet, so create it
-  TeamModel = mongoose.model<ITeam>('Team', TeamSchema);
-}
+const TeamModel = (mongoose.models?.Team as Model<ITeam>) || 
+  mongoose.model<ITeam>('Team', TeamSchema);
 
 // Use this safer export pattern
 export default TeamModel;

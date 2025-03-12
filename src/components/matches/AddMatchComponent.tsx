@@ -119,6 +119,8 @@ export default function AddMatchComponent({ onMatchAdded }: AddMatchProps) {
                 <input
                   type="date"
                   value={date}
+                  min="2025-03-20"
+                  max="2025-03-30"
                   onChange={(e) => setDate(e.target.value)}
                   className="w-full rounded-lg border border-gray-300 p-3 shadow-sm text-gray-800 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all duration-200"
                   required

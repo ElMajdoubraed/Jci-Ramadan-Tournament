@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongoose';
-import Team from '@/models/Team';
+import Team from '../../../models/Team';
 
 export async function GET(request: NextRequest) {
   try {

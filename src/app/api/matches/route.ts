@@ -4,10 +4,44 @@ import Match from '@/models/Match';
 
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const date = searchParams.get('date');
+    const stage = searchParams.get('stage');
+
     await connectToDatabase();
-    const matches = await Match.find({})
-      .populate('teamA', 'name image')
-      .populate('teamB', 'name image')
+
+    let query = {};
+
+    // If date is provided, filter by that date
+    if (date) {
+      const startDate = new Date(date);
+      startDate.setHours(0, 0, 0, 0);
+      
+      const endDate = new Date(date);
+      endDate.setHours(23, 59, 59, 999);
+
+      query = {
+        date: {
+          $gte: startDate,
+          $lte: endDate
+        }
+      };
+    } else if (stage) {
+      let phase = stage;
+      if (stage === 'Quarterfinals') {
+        phase = 'quarter';
+      } else if (stage === 'Semifinals') {
+        phase = 'semi';
+      } else if (stage === 'Final') {
+        phase = 'final';
+      }
+      query = { phase };
+    }
+
+    // Find matches with optional date filter
+    const matches = await Match.find(query)
+      .populate('teamA', 'name flagUrl')
+      .populate('teamB', 'name flagUrl')
       .sort({ date: 1, time: 1 });
     
     return NextResponse.json(matches);

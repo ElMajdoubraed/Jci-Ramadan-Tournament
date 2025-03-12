@@ -12,11 +12,26 @@ export async function PATCH(
     await connectToDatabase();
     
     const { id } = params;
-    const { teamAScore, teamBScore } = await request.json();
+    const { teamAScore, teamBScore, teamAPlayerGoals, teamBPlayerGoals } = await request.json();
 
     if (typeof teamAScore !== 'number' || typeof teamBScore !== 'number') {
       return NextResponse.json(
         { message: 'Invalid score values' },
+        { status: 400 }
+      );
+    }
+    
+    // Validate goal scorers match the scores
+    if (Array.isArray(teamAPlayerGoals) && teamAPlayerGoals.length !== teamAScore) {
+      return NextResponse.json(
+        { message: 'Number of Team A scorers does not match the score' },
+        { status: 400 }
+      );
+    }
+
+    if (Array.isArray(teamBPlayerGoals) && teamBPlayerGoals.length !== teamBScore) {
+      return NextResponse.json(
+        { message: 'Number of Team B scorers does not match the score' },
         { status: 400 }
       );
     }
@@ -31,10 +46,19 @@ export async function PATCH(
       );
     }
     
-    // Update match status and scores
+    // Update match status, scores, and player goals
     match.status = MatchStatus.FINISHED;
     match.teamAScore = teamAScore;
     match.teamBScore = teamBScore;
+    
+    // Update player goals if provided
+    if (Array.isArray(teamAPlayerGoals)) {
+      match.teamAPlayerGoals = teamAPlayerGoals;
+    }
+    
+    if (Array.isArray(teamBPlayerGoals)) {
+      match.teamBPlayerGoals = teamBPlayerGoals;
+    }
     
     await match.save();
     

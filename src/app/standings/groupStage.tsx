@@ -1,44 +1,89 @@
 'use client';
+import { useState, useEffect } from 'react';
+import { ITeam, TeamGroup } from '@/models/Team';
 
 function GroupStage() {
-  // Enhanced data structure with more statistics
-  const groups = [
-    { 
-      name: 'Group A', 
-      teams: [
-        { name: 'Team 1', played: 3, won: 2, drawn: 0, lost: 1, goalsFor: 7, goalsAgainst: 3, points: 6 },
-        { name: 'Team 2', played: 3, won: 1, drawn: 0, lost: 2, goalsFor: 4, goalsAgainst: 5, points: 3 },
-        { name: 'Team 5', played: 3, won: 1, drawn: 1, lost: 1, goalsFor: 3, goalsAgainst: 2, points: 4 },
-        { name: 'Team 6', played: 3, won: 0, drawn: 1, lost: 2, goalsFor: 1, goalsAgainst: 5, points: 1 }
-      ] 
-    },
-    { 
-      name: 'Group B', 
-      teams: [
-        { name: 'Team 3', played: 3, won: 1, drawn: 1, lost: 1, goalsFor: 5, goalsAgainst: 4, points: 4 },
-        { name: 'Team 4', played: 3, won: 0, drawn: 2, lost: 1, goalsFor: 2, goalsAgainst: 3, points: 2 },
-        { name: 'Team 7', played: 3, won: 2, drawn: 0, lost: 1, goalsFor: 6, goalsAgainst: 2, points: 6 },
-        { name: 'Team 8', played: 3, won: 1, drawn: 1, lost: 1, goalsFor: 3, goalsAgainst: 7, points: 4 }
-      ] 
-    },
-  ];
-  
-  // Sort teams by points (highest first)
-  const sortedGroups = groups.map(group => ({
-    ...group,
-    teams: [...group.teams].sort((a, b) => {
-      if (a.points !== b.points) return b.points - a.points;
-      const aGoalDiff = a.goalsFor - a.goalsAgainst;
-      const bGoalDiff = b.goalsFor - b.goalsAgainst;
-      return bGoalDiff - aGoalDiff;
-    })
-  }));
+  const [teams, setTeams] = useState<ITeam[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchTeams() {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/teams');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch teams');
+        }
+        
+        const teamsData = await response.json();
+        setTeams(teamsData);
+      } catch (err) {
+        console.error('Error fetching teams:', err);
+        setError('Failed to load teams. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchTeams();
+  }, []);
+
+  // Group teams by their group
+  const groupedTeams: Record<string, ITeam[]> = teams.reduce((acc: Record<string, ITeam[]>, team: ITeam) => {
+    if (!acc[team.group]) {
+      acc[team.group] = [];
+    }
+    acc[team.group].push(team);
+    return acc;
+  }, {});
+
+  // Sort grouped teams by points
+  const sortedGroups = Object.entries(groupedTeams).map(([groupName, groupTeams]) => {
+    return {
+      name: `Group ${groupName}`,
+      teams: [...groupTeams].sort((a, b) => {
+        // First sort by points
+        if (a.groupStageDetails.points !== b.groupStageDetails.points) {
+          return b.groupStageDetails.points - a.groupStageDetails.points;
+        }
+        
+        // Then by goal difference
+        const aGoalDiff = a.groupStageDetails.goalsFor - a.groupStageDetails.goalsAgainst;
+        const bGoalDiff = b.groupStageDetails.goalsFor - b.groupStageDetails.goalsAgainst;
+        
+        if (aGoalDiff !== bGoalDiff) {
+          return bGoalDiff - aGoalDiff;
+        }
+        
+        // Finally by goals scored
+        return b.groupStageDetails.goalsFor - a.groupStageDetails.goalsFor;
+      })
+    };
+  }).sort((a, b) => a.name.localeCompare(b.name)); // Sort groups alphabetically
 
   // Calculate qualifying positions (top 2 teams qualify)
   const getPositionClass = (index: number) => {
     if (index < 2) return "border-l-4 border-emerald-500"; // Qualifying positions
     return ""; // Non-qualifying positions
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center p-6 bg-red-50 rounded-lg text-red-600">
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="grid sm:grid-cols-2 gap-6 w-full max-w-6xl mx-auto px-3">
@@ -72,11 +117,12 @@ function GroupStage() {
           {/* Team rows - Desktop view */}
           <div className="divide-y divide-gray-100">
             {group.teams.map((team, index) => {
-              const goalDifference = team.goalsFor - team.goalsAgainst;
+              const details = team.groupStageDetails;
+              const goalDifference = details.goalsFor - details.goalsAgainst;
               const isQualifying = index < 2;
               
               return (
-                <div key={team.name}>
+                <div key={`${team.name}-${index}`}>
                   {/* Desktop view */}
                   <div 
                     className={`hidden xs:grid px-3 sm:px-4 py-2 sm:py-3 grid-cols-12 gap-1 items-center hover:bg-gray-50 ${getPositionClass(index)}`}
@@ -86,12 +132,12 @@ function GroupStage() {
                       <span className={`truncate ${isQualifying ? "text-emerald-700" : ""}`}>{team.name}</span>
                       {index === 0 && <span className="ml-2 text-2xs xs:text-xs bg-emerald-100 text-emerald-800 px-1 rounded">Leader</span>}
                     </div>
-                    <div className="col-span-1 text-center text-2xs xs:text-xs">{team.played}</div>
-                    <div className="col-span-1 text-center text-2xs xs:text-xs">{team.won}</div>
-                    <div className="col-span-1 text-center text-2xs xs:text-xs">{team.drawn}</div>
-                    <div className="col-span-1 text-center text-2xs xs:text-xs">{team.lost}</div>
-                    <div className="col-span-1 text-center text-2xs xs:text-xs">{team.goalsFor}</div>
-                    <div className="col-span-1 text-center text-2xs xs:text-xs">{team.goalsAgainst}</div>
+                    <div className="col-span-1 text-center text-2xs xs:text-xs">{details.playedMatches}</div>
+                    <div className="col-span-1 text-center text-2xs xs:text-xs">{details.wins}</div>
+                    <div className="col-span-1 text-center text-2xs xs:text-xs">{details.draws}</div>
+                    <div className="col-span-1 text-center text-2xs xs:text-xs">{details.losses}</div>
+                    <div className="col-span-1 text-center text-2xs xs:text-xs">{details.goalsFor}</div>
+                    <div className="col-span-1 text-center text-2xs xs:text-xs">{details.goalsAgainst}</div>
                     <div className="col-span-1 text-center font-medium text-2xs xs:text-xs">
                       <span className={
                         goalDifference > 0 ? "text-emerald-600" : 
@@ -100,7 +146,7 @@ function GroupStage() {
                         {goalDifference > 0 ? "+" : ""}{goalDifference}
                       </span>
                     </div>
-                    <div className="col-span-1 text-center font-bold text-2xs xs:text-xs">{team.points}</div>
+                    <div className="col-span-1 text-center font-bold text-2xs xs:text-xs">{details.points}</div>
                   </div>
                   
                   {/* Mobile view - compact */}
@@ -111,7 +157,7 @@ function GroupStage() {
                       <span className="inline-block w-4 text-center mr-1 text-2xs text-gray-500">{index + 1}</span>
                       <span className={`truncate ${isQualifying ? "text-emerald-700" : ""}`}>{team.name}</span>
                     </div>
-                    <div className="col-span-1 text-center text-2xs">{team.played}</div>
+                    <div className="col-span-1 text-center text-2xs">{details.playedMatches}</div>
                     <div className="col-span-1 text-center text-2xs">
                       <span className={
                         goalDifference > 0 ? "text-emerald-600" : 
@@ -120,7 +166,7 @@ function GroupStage() {
                         {goalDifference > 0 ? "+" : ""}{goalDifference}
                       </span>
                     </div>
-                    <div className="col-span-2 text-center font-bold text-2xs">{team.points}</div>
+                    <div className="col-span-2 text-center font-bold text-2xs">{details.points}</div>
                   </div>
                 </div>
               );

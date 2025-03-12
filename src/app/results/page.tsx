@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { MatchPhase } from '@/models/Match';
 
 // Define TypeScript interfaces
 interface MatchGoal {
@@ -11,7 +12,7 @@ interface MatchGoal {
 }
 
 interface MatchResult {
-  id: number;
+  id: string;
   date: string;
   teamA: string;
   teamB: string;
@@ -32,136 +33,46 @@ interface MatchResult {
 }
 
 function Results() {
-  // Sample match results data
-  const resultsData: MatchResult[] = [
-    {
-      id: 1,
-      date: '2024-03-01T14:00:00',
-      teamA: 'Al Barakah',
-      teamB: 'Al Fursan',
-      scoreA: 3,
-      scoreB: 1,
-      stage: 'Group Stage',
-      group: 'A',
-      location: 'Main Stadium',
-      isCompleted: true,
-      goals: [
-        { player: 'Ahmed Hassan', team: 'Al Barakah', minute: 23 },
-        { player: 'Tariq Nabil', team: 'Al Fursan', minute: 37 },
-        { player: 'Mahmoud Ibrahim', team: 'Al Barakah', minute: 56 },
-        { player: 'Ahmed Hassan', team: 'Al Barakah', minute: 78, isPenalty: true }
-      ],
-      stats: {
-        possession: [58, 42],
-        shots: [14, 9],
-        shotsOnTarget: [7, 3],
-        corners: [6, 4],
-        fouls: [8, 12]
-      }
-    },
-    {
-      id: 2,
-      date: '2024-03-01T16:00:00',
-      teamA: 'Al Najm',
-      teamB: 'Al Sakhr',
-      scoreA: 2,
-      scoreB: 2,
-      stage: 'Group Stage',
-      group: 'B',
-      location: 'Field 2',
-      isCompleted: true,
-      goals: [
-        { player: 'Jamal Rashid', team: 'Al Najm', minute: 15 },
-        { player: 'Waleed Tarek', team: 'Al Sakhr', minute: 34 },
-        { player: 'Karim Farouk', team: 'Al Najm', minute: 61 },
-        { player: 'Hisham Fahmy', team: 'Al Sakhr', minute: 89 }
-      ],
-      stats: {
-        possession: [45, 55],
-        shots: [10, 15],
-        shotsOnTarget: [5, 7],
-        corners: [3, 8],
-        fouls: [14, 9]
-      }
-    },
-    {
-      id: 3,
-      date: '2024-03-02T14:00:00',
-      teamA: 'Al Barakah',
-      teamB: 'Al Najm',
-      scoreA: 2,
-      scoreB: 1,
-      stage: 'Group Stage',
-      group: 'A',
-      location: 'Main Stadium',
-      isCompleted: true,
-      goals: [
-        { player: 'Ahmed Hassan', team: 'Al Barakah', minute: 12 },
-        { player: 'Jamal Rashid', team: 'Al Najm', minute: 45 },
-        { player: 'Khalid Ali', team: 'Al Barakah', minute: 72 }
-      ],
-      stats: {
-        possession: [52, 48],
-        shots: [12, 11],
-        shotsOnTarget: [6, 4],
-        corners: [5, 6],
-        fouls: [10, 11]
-      }
-    },
-    {
-      id: 4,
-      date: '2024-03-05T16:00:00',
-      teamA: 'Al Sakhr',
-      teamB: 'Al Fursan',
-      scoreA: 0,
-      scoreB: 0,
-      stage: 'Group Stage',
-      group: 'B',
-      location: 'Field 2',
-      isCompleted: true,
-      goals: [],
-      stats: {
-        possession: [50, 50],
-        shots: [8, 7],
-        shotsOnTarget: [2, 3],
-        corners: [4, 5],
-        fouls: [13, 15]
-      }
-    },
-    {
-      id: 5,
-      date: '2024-03-08T14:00:00',
-      teamA: 'Al Barakah',
-      teamB: 'Al Sakhr',
-      scoreA: 2,
-      scoreB: 1,
-      stage: 'Final Stage',
-      location: 'Main Stadium',
-      isCompleted: true,
-      goals: [
-        { player: 'Hisham Fahmy', team: 'Al Sakhr', minute: 8 },
-        { player: 'Ahmed Hassan', team: 'Al Barakah', minute: 34 },
-        { player: 'Mahmoud Ibrahim', team: 'Al Barakah', minute: 76 }
-      ],
-      stats: {
-        possession: [62, 38],
-        shots: [18, 6],
-        shotsOnTarget: [9, 2],
-        corners: [7, 2],
-        fouls: [7, 16]
-      }
-    }
-  ];
-
-  // Filter options
-  const stages = ['All Stages', 'Group Stage', 'Final Stage'];
+  // State
+  const [resultsData, setResultsData] = useState<MatchResult[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedStage, setSelectedStage] = useState<string>('All Stages');
-  const [selectedMatchId, setSelectedMatchId] = useState<number | null>(null);
+  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
+
+  // Get available stages from the Match model
+  const stages = ['All Stages', 'Group Stage', 'Round of 16', 'Quarter Finals', 'Semi Finals', 'Final'];
+
+  // Fetch results data
+  useEffect(() => {
+    const fetchResults = async () => {
+      try {
+        setLoading(true);
+        const stageParam = selectedStage !== 'All Stages' ? 
+          `?stage=${encodeURIComponent(selectedStage)}` : '';
+        
+        const response = await fetch(`/api/results${stageParam}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch results');
+        }
+        
+        const data = await response.json();
+        setResultsData(data);
+        setError(null);
+      } catch (err: any) {
+        console.error('Error fetching results:', err);
+        setError(err.message || 'Failed to load results');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResults();
+  }, [selectedStage]);
 
   // Filter results based on selected stage
-  const filteredResults = selectedStage === 'All Stages' 
-    ? resultsData 
-    : resultsData.filter(match => match.stage === selectedStage);
+  const filteredResults = resultsData;
 
   // Format date for display
   const formatMatchDate = (dateString: string): string => {
@@ -209,6 +120,22 @@ function Results() {
     ? resultsData.find(match => match.id === selectedMatchId) 
     : null;
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center p-6 bg-red-50 rounded-lg text-red-600">
+        <p>{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-emerald-700 to-emerald-600 p-4 rounded-lg shadow-md text-white">
@@ -222,7 +149,7 @@ function Results() {
       <div className="bg-white shadow rounded-lg p-4">
         <div className="flex flex-wrap justify-between items-center">
           <h3 className="text-lg font-medium text-emerald-700 mb-2 md:mb-0">Filter Results</h3>
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2">
             {stages.map(stage => (
               <button
                 key={stage}
@@ -246,9 +173,12 @@ function Results() {
           <div className="bg-emerald-600 p-4 flex justify-between items-center text-white">
             <button 
               onClick={() => setSelectedMatchId(null)}
-              className="bg-white bg-opacity-20 rounded-full p-1 hover:bg-opacity-30 transition-all"
+              className="bg-white bg-opacity-20 rounded-full p-2 hover:bg-opacity-30 transition-all"
+              aria-label="Go back"
             >
-              ←
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+              </svg>
             </button>
             <h3 className="text-lg font-bold">Match Details</h3>
             <div className="bg-white text-emerald-800 px-2 py-1 rounded-full text-xs font-medium">
@@ -291,7 +221,7 @@ function Results() {
             </div>
             
             {/* Match stats */}
-            {selectedMatch.stats && (
+            {/* {selectedMatch.stats && (
               <div className="mt-6">
                 <h4 className="text-base font-medium text-gray-700 mb-3 border-b pb-2">Match Statistics</h4>
                 <div className="space-y-3">
@@ -356,36 +286,53 @@ function Results() {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
             
-            {/* Goal timeline */}
+            {/* Goal scorers */}
             {selectedMatch.goals.length > 0 && (
               <div className="mt-6">
-                <h4 className="text-base font-medium text-gray-700 mb-3 border-b pb-2">Goals</h4>
-                <div className="relative py-4">
-                  <div className="absolute top-0 bottom-0 left-1/2 w-px bg-gray-200"></div>
-                  
-                  {selectedMatch.goals.map((goal, index) => {
-                    const isTeamA = goal.team === selectedMatch.teamA;
-                    
-                    return (
-                      <div key={index} className={`relative flex items-center mb-4 ${isTeamA ? 'justify-start' : 'justify-end'}`}>
-                        <div className={`absolute top-1/2 left-1/2 transform -translate-y-1/2 ${isTeamA ? '-translate-x-1/2' : 'translate-x-1/2'} w-3 h-3 rounded-full bg-yellow-400 z-10`}></div>
-                        
-                        <div className={`${isTeamA ? 'mr-8' : 'ml-8'} p-2 rounded-lg bg-gray-50 border border-gray-100 ${isTeamA ? 'text-right' : 'text-left'} w-5/12`}>
-                          <div className="font-medium">{goal.player}</div>
-                          <div className="text-sm text-gray-500 flex items-center justify-between">
-                            <span>{goal.team}</span>
-                            <span className="bg-yellow-100 text-yellow-800 px-1 rounded text-xs">
-                              {goal.minute}{"'"}
-                              {goal.isPenalty && ' (P)'}
-                              {goal.isOwnGoal && ' (OG)'}
+                <h4 className="text-base font-medium text-gray-700 mb-3 border-b pb-2">Goal Scorers</h4>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Team A scorers */}
+                  <div className="bg-emerald-50 p-4 rounded-lg">
+                    <h5 className="font-medium text-emerald-800 mb-2">{selectedMatch.teamA}</h5>
+                    <ul className="space-y-1">
+                      {selectedMatch.goals
+                        .filter(goal => goal.team === selectedMatch.teamA)
+                        .map((goal, idx) => (
+                          <li key={`a-${idx}`} className="flex items-center">
+                            <span className="font-medium text-gray-700">{goal.player}</span>
+                            <span className="ml-auto bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded-full">
+                              ⚽ Scorer
                             </span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                          </li>
+                        ))}
+                      {selectedMatch.goals.filter(goal => goal.team === selectedMatch.teamA).length === 0 && (
+                        <li className="text-gray-500 text-sm">No goals</li>
+                      )}
+                    </ul>
+                  </div>
+                  
+                  {/* Team B scorers */}
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h5 className="font-medium text-blue-800 mb-2">{selectedMatch.teamB}</h5>
+                    <ul className="space-y-1">
+                      {selectedMatch.goals
+                        .filter(goal => goal.team === selectedMatch.teamB)
+                        .map((goal, idx) => (
+                          <li key={`b-${idx}`} className="flex items-center">
+                            <span className="font-medium text-gray-700">{goal.player}</span>
+                            <span className="ml-auto bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">
+                              ⚽ Scorer
+                            </span>
+                          </li>
+                        ))}
+                      {selectedMatch.goals.filter(goal => goal.team === selectedMatch.teamB).length === 0 && (
+                        <li className="text-gray-500 text-sm">No goals</li>
+                      )}
+                    </ul>
+                  </div>
                 </div>
               </div>
             )}

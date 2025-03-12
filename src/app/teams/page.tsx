@@ -1,33 +1,6 @@
 'use client';
-import { useState } from 'react';
-
-// Define TypeScript interfaces for our data structures
-interface Player {
-  id: number;
-  name: string;
-  position: string;
-  number: number;
-}
-
-interface TeamStats {
-  played: number;
-  won: number;
-  drawn: number;
-  lost: number;
-  goalsFor: number;
-  goalsAgainst: number;
-}
-
-interface Team {
-  id: number;
-  name: string;
-  group: string;
-  logo: string;
-  color: string;
-  captain: string;
-  players: Player[];
-  stats: TeamStats;
-}
+import { useState, useEffect } from 'react';
+import { ITeam, TeamGroup } from '@/models/Team';
 
 // Helper function to get position full name
 const getPositionFullName = (position: string): string => {
@@ -50,28 +23,6 @@ const TournamentHeader = ({ teamsCount, groupsCount }: { teamsCount: number; gro
   </div>
 );
 
-// Player Card Component
-const PlayerCard = ({ player }: { player: Player }) => (
-  <div className="border border-gray-100 rounded-lg p-3 flex items-center hover:bg-gray-50">
-    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold mr-3">
-      {player.number}
-    </div>
-    <div>
-      <div className="font-medium">{player.name}</div>
-      <div className="text-xs text-gray-500">{getPositionFullName(player.position)}</div>
-    </div>
-  </div>
-);
-
-// Players Tab Component
-const PlayersTab = ({ players }: { players: Player[] }) => (
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-    {players.map(player => (
-      <PlayerCard key={player.id} player={player} />
-    ))}
-  </div>
-);
-
 // Stat Card Component
 const StatCard = ({ label, value, highlight = false }: { label: string; value: string | number; highlight?: boolean }) => (
   <div className="bg-white p-3 rounded-lg shadow-sm">
@@ -83,8 +34,9 @@ const StatCard = ({ label, value, highlight = false }: { label: string; value: s
 );
 
 // Stats Tab Component
-const StatsTab = ({ stats }: { stats: TeamStats }) => {
-  const goalDifference = stats.goalsFor - stats.goalsAgainst;
+const StatsTab = ({ team }: { team: ITeam }) => {
+  const { groupStageDetails } = team;
+  const goalDifference = groupStageDetails.goalsFor - groupStageDetails.goalsAgainst;
   const isPositive = goalDifference > 0;
   const isNegative = goalDifference < 0;
   
@@ -93,15 +45,19 @@ const StatsTab = ({ stats }: { stats: TeamStats }) => {
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         <StatCard 
           label="Matches Played" 
-          value={stats.played} 
+          value={groupStageDetails.playedMatches} 
         />
         <StatCard 
           label="Win Rate" 
-          value={`${Math.round((stats.won / stats.played) * 100)}%`} 
+          value={groupStageDetails.playedMatches > 0 
+            ? `${Math.round((groupStageDetails.wins / groupStageDetails.playedMatches) * 100)}%` 
+            : '0%'} 
         />
         <StatCard 
           label="Goals Per Game" 
-          value={(stats.goalsFor / stats.played).toFixed(1)} 
+          value={groupStageDetails.playedMatches > 0 
+            ? (groupStageDetails.goalsFor / groupStageDetails.playedMatches).toFixed(1) 
+            : '0'} 
         />
         <div className="bg-white p-3 rounded-lg shadow-sm">
           <div className="text-xs text-gray-500 mb-1">Goal Difference</div>
@@ -117,20 +73,22 @@ const StatsTab = ({ stats }: { stats: TeamStats }) => {
 };
 
 // Team Detail Component
-const TeamDetail = ({ team, onBack }: { team: Team; onBack: () => void }) => {
-  const [activeTab, setActiveTab] = useState<'players' | 'stats'>('players');
+const TeamDetail = ({ team, onBack }: { team: ITeam; onBack: () => void }) => {
+  const [activeTab, setActiveTab] = useState<'stats'>('stats');
   
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className={`bg-${team.color}-600 p-4 flex justify-between items-center text-white`}>
+      <div className="bg-emerald-600 p-4 flex justify-between items-center text-white">
         <button 
           onClick={onBack}
-          className="bg-white bg-opacity-20 rounded-full p-1 hover:bg-opacity-30 transition-all"
+          className="rounded-full p-2 hover:bg-opacity-30 transition-all"
+          aria-label="Go back"
         >
-          ←
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+          </svg>
         </button>
         <h3 className="text-xl font-bold flex items-center">
-          <span className="text-2xl mr-2">{team.logo}</span>
           {team.name}
         </h3>
         <div className="bg-white text-emerald-800 px-2 py-1 rounded-full text-xs font-medium">
@@ -142,75 +100,73 @@ const TeamDetail = ({ team, onBack }: { team: Team; onBack: () => void }) => {
         <div className="flex flex-wrap justify-between items-center mb-4">
           <div className="flex items-center mb-2 md:mb-0">
             <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 mr-3">
-              👤
+              {team.image ? (
+                <img src={team.image} alt={team.name} className="w-full h-full object-cover rounded-full" />
+              ) : (
+                '👤'
+              )}
             </div>
             <div>
               <div className="text-sm text-gray-500">Captain</div>
-              <div className="font-medium">{team.captain}</div>
+              <div className="font-medium">{team.captainName}</div>
             </div>
           </div>
           
           <div className="flex space-x-2 text-sm">
             <div className="px-2 py-1 bg-emerald-100 text-emerald-800 rounded-md">
-              <span className="font-medium">{team.stats.won}</span> W
+              <span className="font-medium">{team.wins}</span> W
             </div>
             <div className="px-2 py-1 bg-gray-100 text-gray-800 rounded-md">
-              <span className="font-medium">{team.stats.drawn}</span> D
+              <span className="font-medium">{team.draws}</span> D
             </div>
             <div className="px-2 py-1 bg-red-100 text-red-800 rounded-md">
-              <span className="font-medium">{team.stats.lost}</span> L
+              <span className="font-medium">{team.losses}</span> L
             </div>
             <div className="px-2 py-1 bg-blue-100 text-blue-800 rounded-md">
-              <span className="font-medium">{team.stats.goalsFor}</span> GF
+              <span className="font-medium">{team.goalsScored}</span> GF
             </div>
           </div>
         </div>
         
         <div className="flex border-b border-gray-200 mb-4">
           <button
-            className={`px-4 py-2 font-medium text-sm ${activeTab === 'players' ? 'text-emerald-600 border-b-2 border-emerald-500' : 'text-gray-500 hover:text-gray-700'}`}
-            onClick={() => setActiveTab('players')}
-          >
-            Players
-          </button>
-          <button
-            className={`px-4 py-2 font-medium text-sm ${activeTab === 'stats' ? 'text-emerald-600 border-b-2 border-emerald-500' : 'text-gray-500 hover:text-gray-700'}`}
+            className="px-4 py-2 font-medium text-sm text-emerald-600 border-b-2 border-emerald-500"
             onClick={() => setActiveTab('stats')}
           >
             Statistics
           </button>
         </div>
         
-        {activeTab === 'players' ? (
-          <PlayersTab players={team.players} />
-        ) : (
-          <StatsTab stats={team.stats} />
-        )}
+        <StatsTab team={team} />
       </div>
     </div>
   );
 };
 
 // Team List Item Component
-const TeamListItem = ({ team, onSelect }: { team: Team; onSelect: () => void }) => (
+const TeamListItem = ({ team, onSelect }: { team: ITeam; onSelect: () => void }) => (
   <div 
     className="p-4 hover:bg-gray-50 cursor-pointer transition-colors"
     onClick={onSelect}
   >
     <div className="flex justify-between items-center">
       <div className="flex items-center">
-        <div className={`w-10 h-10 rounded-full bg-${team.color}-100 text-${team.color}-600 flex items-center justify-center font-bold text-lg mr-3`}>
-          {team.logo}
+        <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-lg mr-3">
+          {team.image ? (
+            <img src={team.image} alt={team.name} className="w-full h-full object-cover rounded-full" />
+          ) : (
+            '⚽'
+          )}
         </div>
         <div>
           <div className="font-medium">{team.name}</div>
-          <div className="text-xs text-gray-500">Captain: {team.captain}</div>
+          <div className="text-xs text-gray-500">Captain: {team.captainName}</div>
         </div>
       </div>
       
       <div className="flex items-center">
         <div className="text-xs bg-gray-100 rounded-full px-2 py-1 mr-2">
-          {team.players.length} players
+          {team.groupStageDetails.points} pts
         </div>
         <div className="text-emerald-600">→</div>
       </div>
@@ -219,16 +175,16 @@ const TeamListItem = ({ team, onSelect }: { team: Team; onSelect: () => void }) 
 );
 
 // Group Component
-const GroupTeams = ({ group, teams, onSelectTeam }: { group: string; teams: Team[]; onSelectTeam: (team: Team) => void }) => (
+const GroupTeams = ({ group, teams, onSelectTeam }: { group: string; teams: ITeam[]; onSelectTeam: (team: ITeam) => void }) => (
   <div className="bg-white rounded-lg shadow-md overflow-hidden">
     <div className="bg-emerald-600 p-3">
       <h3 className="text-lg font-bold text-white">Group {group}</h3>
     </div>
     
     <div className="divide-y divide-gray-100">
-      {teams.map(team => (
+      {teams.map((team:any) => (
         <TeamListItem 
-          key={team.id} 
+          key={team._id.toString()} 
           team={team} 
           onSelect={() => onSelectTeam(team)}
         />
@@ -238,7 +194,7 @@ const GroupTeams = ({ group, teams, onSelectTeam }: { group: string; teams: Team
 );
 
 // Teams List Component
-const TeamsList = ({ groupedTeams, onSelectTeam }: { groupedTeams: Record<string, Team[]>; onSelectTeam: (team: Team) => void }) => (
+const TeamsList = ({ groupedTeams, onSelectTeam }: { groupedTeams: Record<string, ITeam[]>; onSelectTeam: (team: ITeam) => void }) => (
   <div className="grid md:grid-cols-2 gap-6">
     {Object.entries(groupedTeams).map(([group, teams]) => (
       <GroupTeams 
@@ -253,76 +209,43 @@ const TeamsList = ({ groupedTeams, onSelectTeam }: { groupedTeams: Record<string
 
 // Main Component
 function AllTeams() {
-  // Sample team data with groups, players, and stats
-  const teamsData: Team[] = [
-    {
-      id: 1,
-      name: 'Al Barakah',
-      group: 'A',
-      logo: '⚽',
-      color: 'emerald',
-      captain: 'Ahmed Hassan',
-      players: [
-        { id: 1, name: 'Ahmed Hassan', position: 'FW', number: 10 },
-        { id: 2, name: 'Mahmoud Ibrahim', position: 'MF', number: 8 },
-        { id: 3, name: 'Khalid Ali', position: 'DF', number: 4 },
-        { id: 4, name: 'Omar Samir', position: 'GK', number: 1 },
-        { id: 5, name: 'Hamza Karim', position: 'MF', number: 6 }
-      ],
-      stats: { played: 3, won: 2, drawn: 0, lost: 1, goalsFor: 7, goalsAgainst: 3 }
-    },
-    {
-      id: 2,
-      name: 'Al Fursan',
-      group: 'A',
-      logo: '⚽',
-      color: 'sky',
-      captain: 'Yasir Mohammed',
-      players: [
-        { id: 1, name: 'Yasir Mohammed', position: 'MF', number: 7 },
-        { id: 2, name: 'Tariq Nabil', position: 'FW', number: 9 },
-        { id: 3, name: 'Faris Ziad', position: 'DF', number: 3 },
-        { id: 4, name: 'Malik Qasim', position: 'GK', number: 1 },
-        { id: 5, name: 'Bilal Hasan', position: 'MF', number: 11 }
-      ],
-      stats: { played: 3, won: 1, drawn: 0, lost: 2, goalsFor: 4, goalsAgainst: 5 }
-    },
-    {
-      id: 3,
-      name: 'Al Najm',
-      group: 'B',
-      logo: '⚽',
-      color: 'amber',
-      captain: 'Jamal Rashid',
-      players: [
-        { id: 1, name: 'Jamal Rashid', position: 'FW', number: 10 },
-        { id: 2, name: 'Karim Farouk', position: 'MF', number: 8 },
-        { id: 3, name: 'Zain Amir', position: 'DF', number: 5 },
-        { id: 4, name: 'Saeed Nasir', position: 'GK', number: 1 },
-        { id: 5, name: 'Adel Hakim', position: 'DF', number: 2 }
-      ],
-      stats: { played: 3, won: 1, drawn: 1, lost: 1, goalsFor: 5, goalsAgainst: 4 }
-    },
-    {
-      id: 4,
-      name: 'Al Sakhr',
-      group: 'B',
-      logo: '⚽',
-      color: 'indigo',
-      captain: 'Waleed Tarek',
-      players: [
-        { id: 1, name: 'Waleed Tarek', position: 'MF', number: 6 },
-        { id: 2, name: 'Hisham Fahmy', position: 'FW', number: 9 },
-        { id: 3, name: 'Rami Majid', position: 'DF', number: 4 },
-        { id: 4, name: 'Akram Noor', position: 'GK', number: 1 },
-        { id: 5, name: 'Sami Jalal', position: 'MF', number: 7 }
-      ],
-      stats: { played: 3, won: 0, drawn: 2, lost: 1, goalsFor: 2, goalsAgainst: 3 }
+  const [teams, setTeams] = useState<ITeam[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedTeam, setSelectedTeam] = useState<ITeam | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    async function fetchTeams() {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/teams');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch teams');
+        }
+        
+        const teamsData = await response.json();
+        setTeams(teamsData);
+      } catch (err) {
+        console.error('Error fetching teams:', err);
+        setError('Failed to load teams. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
     }
-  ];
+
+    fetchTeams();
+  }, []);
+
+  // Filter teams based on search query
+  const filteredTeams = teams.filter(team => 
+    team.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    team.captainName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Group teams by their group
-  const groupedTeams: Record<string, Team[]> = teamsData.reduce((acc: Record<string, Team[]>, team: Team) => {
+  const groupedTeams: Record<string, ITeam[]> = filteredTeams.reduce((acc: Record<string, ITeam[]>, team: ITeam) => {
     if (!acc[team.group]) {
       acc[team.group] = [];
     }
@@ -330,13 +253,26 @@ function AllTeams() {
     return acc;
   }, {});
 
-  // State for selected team to view details
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center p-6 bg-red-50 rounded-lg text-red-600">
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <TournamentHeader 
-        teamsCount={teamsData.length} 
+        teamsCount={teams.length} 
         groupsCount={Object.keys(groupedTeams).length} 
       />
 
@@ -346,10 +282,33 @@ function AllTeams() {
           onBack={() => setSelectedTeam(null)} 
         />
       ) : (
-        <TeamsList 
-          groupedTeams={groupedTeams} 
-          onSelectTeam={setSelectedTeam} 
-        />
+        <>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none">
+              <svg className="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+              </svg>
+            </div>
+            <input
+              type="search"
+              className="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-emerald-500 focus:border-emerald-500"
+              placeholder="Search teams or captains..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
+          {Object.keys(groupedTeams).length > 0 ? (
+            <TeamsList 
+              groupedTeams={groupedTeams} 
+              onSelectTeam={setSelectedTeam} 
+            />
+          ) : searchQuery ? (
+            <div className="text-center p-6 bg-gray-50 rounded-lg">
+              <p className="text-gray-500">No teams found matching "{searchQuery}"</p>
+            </div>
+          ) : null}
+        </>
       )}
     </div>
   );

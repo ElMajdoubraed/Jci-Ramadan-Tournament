@@ -11,7 +11,7 @@ function FinalStage() {
     { id: 'Final', name: 'Final', emoji: '🏆' }
   ];
   
-  const [activeFinalStage, setActiveFinalStage] = useState('Final');
+  const [activeFinalStage, setActiveFinalStage] = useState('1/8');
   
   // Function to determine if a stage is completed
   const isStageCompleted = (stageId: string) => {
@@ -123,7 +123,7 @@ function FinalStage() {
           </h3>
         </div>
         
-        <MatchList date={new Date()} />
+        <MatchList date={new Date()} stage={activeFinalStage} />
       </div>
       
       <style jsx>{`

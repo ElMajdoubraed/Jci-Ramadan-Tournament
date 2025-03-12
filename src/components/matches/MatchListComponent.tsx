@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { IMatch, MatchStatus, MatchPhase } from '@/models/Match';
+import { ITeam } from '@/models/Team';
 
 interface MatchListProps {
   matches: IMatch[];
@@ -10,9 +11,29 @@ interface MatchListProps {
 
 export default function MatchListComponent({ matches, onRefresh }: MatchListProps) {
   const [isUpdating, setIsUpdating] = useState(false);
-  const [editMatchId, setEditMatchId] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedMatch, setSelectedMatch] = useState<IMatch | null>(null);
   const [teamAScore, setTeamAScore] = useState(0);
   const [teamBScore, setTeamBScore] = useState(0);
+  const [teamAScorers, setTeamAScorers] = useState<string[]>([]);
+  const [teamBScorers, setTeamBScorers] = useState<string[]>([]);
+  const [newTeamAScorer, setNewTeamAScorer] = useState('');
+  const [newTeamBScorer, setNewTeamBScorer] = useState('');
+
+  // Reset form when selected match changes
+  useEffect(() => {
+    if (selectedMatch) {
+      setTeamAScore(selectedMatch.teamAScore);
+      setTeamBScore(selectedMatch.teamBScore);
+      setTeamAScorers(selectedMatch.teamAPlayerGoals || []);
+      setTeamBScorers(selectedMatch.teamBPlayerGoals || []);
+    } else {
+      setTeamAScore(0);
+      setTeamBScore(0);
+      setTeamAScorers([]);
+      setTeamBScorers([]);
+    }
+  }, [selectedMatch]);
 
   const handleStartMatch = async (matchId: string) => {
     if (isUpdating) return;
@@ -42,24 +63,54 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
     }
   };
 
-  const startEditingScore = (match: IMatch) => {
-    setEditMatchId(match._id as string);
-    setTeamAScore(match.teamAScore);
-    setTeamBScore(match.teamBScore);
+  const openScoreModal = (match: IMatch) => {
+    setSelectedMatch(match);
+    setShowModal(true);
   };
 
-  const cancelEditingScore = () => {
-    setEditMatchId(null);
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedMatch(null);
   };
 
-  const handleEndMatch = async (matchId: string) => {
-    if (isUpdating) return;
-    if (!editMatchId) return;
-    
+  const addTeamAScorer = () => {
+    if (!newTeamAScorer.trim()) return;
+    setTeamAScorers([...teamAScorers, newTeamAScorer.trim()]);
+    setNewTeamAScorer('');
+    // Automatically update score to match the number of scorers
+    setTeamAScore(teamAScorers.length + 1);
+  };
+
+  const addTeamBScorer = () => {
+    if (!newTeamBScorer.trim()) return;
+    setTeamBScorers([...teamBScorers, newTeamBScorer.trim()]);
+    setNewTeamBScorer('');
+    // Automatically update score to match the number of scorers
+    setTeamBScore(teamBScorers.length + 1);
+  };
+
+  const removeTeamAScorer = (index: number) => {
+    const newScorers = [...teamAScorers];
+    newScorers.splice(index, 1);
+    setTeamAScorers(newScorers);
+    // Automatically update score to match the number of scorers
+    setTeamAScore(newScorers.length);
+  };
+
+  const removeTeamBScorer = (index: number) => {
+    const newScorers = [...teamBScorers];
+    newScorers.splice(index, 1);
+    setTeamBScorers(newScorers);
+    // Automatically update score to match the number of scorers
+    setTeamBScore(newScorers.length);
+  };
+
+  const handleEndMatch = async () => {
+    if (isUpdating || !selectedMatch) return;
     setIsUpdating(true);
 
     try {
-      const response = await fetch(`/api/matches/${matchId}/end`, {
+      const response = await fetch(`/api/matches/${selectedMatch._id}/end`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -67,11 +118,14 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
         body: JSON.stringify({
           teamAScore,
           teamBScore,
+          teamAPlayerGoals: teamAScorers,
+          teamBPlayerGoals: teamBScorers,
+          status: MatchStatus.FINISHED
         }),
       });
 
       if (response.ok) {
-        setEditMatchId(null);
+        closeModal();
         onRefresh();
       } else {
         alert('Failed to end match');
@@ -115,171 +169,306 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-indigo-100 bg-white shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-indigo-50">
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-            <tr>
-              <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
-                Date & Time
-              </th>
-              <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
-                Teams
-              </th>
-              <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
-                Score
-              </th>
-              <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
-                Status
-              </th>
-              <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
-                Phase
-              </th>
-              <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100 bg-white">
-            {matches.map((match, index) => (
-              <tr 
-                key={match._id as string} 
-                className={`${index % 2 === 0 ? 'bg-white' : 'bg-indigo-50'} transition-colors duration-150 hover:bg-indigo-100`}
-              >
-                <td className="whitespace-nowrap px-6 py-4">
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium text-gray-900">{new Date(match.date).toLocaleDateString()}</span>
-                    <span className="text-xs text-gray-500">{match.time}</span>
-                  </div>
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  <div className="flex items-center">
-                    <div className="flex flex-col items-end mr-2">
-                      <span className="text-sm font-bold text-indigo-700">{(match.teamA as any)?.name || 'Team A'}</span>
+    <>
+      <div className="overflow-hidden rounded-xl border border-indigo-100 bg-white shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-indigo-50">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+              <tr>
+                <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
+                  Date & Time
+                </th>
+                <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
+                  Teams
+                </th>
+                <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
+                  Score
+                </th>
+                <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
+                  Status
+                </th>
+                <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
+                  Phase
+                </th>
+                <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 bg-white">
+              {matches.map((match, index) => (
+                <tr 
+                  key={match._id as string} 
+                  className={`${index % 2 === 0 ? 'bg-white' : 'bg-indigo-50'} transition-colors duration-150 hover:bg-indigo-100`}
+                >
+                  <td className="whitespace-nowrap px-6 py-4">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-gray-900">{new Date(match.date).toLocaleDateString()}</span>
+                      <span className="text-xs text-gray-500">{match.time}</span>
                     </div>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-800">
-                      VS
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4">
+                    <div className="flex items-center">
+                      <div className="flex flex-col items-end mr-2">
+                        <span className="text-sm font-bold text-indigo-700">{(match.teamA as ITeam)?.name || 'Team A'}</span>
+                      </div>
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-800">
+                        VS
+                      </div>
+                      <div className="flex flex-col items-start ml-2">
+                        <span className="text-sm font-bold text-purple-700">{(match.teamB as ITeam)?.name || 'Team B'}</span>
+                      </div>
                     </div>
-                    <div className="flex flex-col items-start ml-2">
-                      <span className="text-sm font-bold text-purple-700">{(match.teamB as any)?.name || 'Team B'}</span>
-                    </div>
-                  </div>
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  {editMatchId === match._id ? (
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="number"
-                        min="0"
-                        value={teamAScore}
-                        onChange={(e) => setTeamAScore(parseInt(e.target.value) || 0)}
-                        className="w-16 rounded-md border border-indigo-300 p-2 text-center text-indigo-700 font-semibold focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                      />
-                      <span className="text-gray-500 font-bold">-</span>
-                      <input
-                        type="number"
-                        min="0"
-                        value={teamBScore}
-                        onChange={(e) => setTeamBScore(parseInt(e.target.value) || 0)}
-                        className="w-16 rounded-md border border-purple-300 p-2 text-center text-purple-700 font-semibold focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50"
-                      />
-                    </div>
-                  ) : (
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4">
                     <div className="flex items-center justify-center w-20 h-10 rounded-lg bg-gray-100">
                       <span className="font-bold text-indigo-700">{match.teamAScore}</span>
                       <span className="mx-2 text-gray-400">-</span>
                       <span className="font-bold text-purple-700">{match.teamBScore}</span>
                     </div>
-                  )}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  <span 
-                    className={`inline-flex items-center rounded-full px-3 py-0.5 text-sm font-medium ${
-                      getStatusBadgeClasses(match.status as MatchStatus)
-                    }`}
-                  >
-                    {match.status === MatchStatus.LIVE && (
-                      <span className="mr-1.5 h-2 w-2 rounded-full bg-red-600"></span>
-                    )}
-                    {match.status}
-                  </span>
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  <span className="inline-flex items-center rounded-md bg-indigo-50 px-2.5 py-1 text-sm font-medium text-indigo-700 ring-1 ring-inset ring-indigo-200">
-                    {formatMatchPhase(match.phase as MatchPhase)}
-                  </span>
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  <div className="flex space-x-2">
-                    {match.status === MatchStatus.COMING && (
-                      <button
-                        onClick={() => handleStartMatch(match._id as string)}
-                        disabled={isUpdating}
-                        className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:bg-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 transition-all duration-200"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                        </svg>
-                        Start
-                      </button>
-                    )}
-                    
-                    {match.status !== MatchStatus.FINISHED && !editMatchId && (
-                      <button
-                        onClick={() => startEditingScore(match)}
-                        className="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 transition-all duration-200"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clipRule="evenodd" />
-                        </svg>
-                        End
-                      </button>
-                    )}
-                    
-                    {editMatchId === match._id && (
-                      <>
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4">
+                    <span 
+                      className={`inline-flex items-center rounded-full px-3 py-0.5 text-sm font-medium ${
+                        getStatusBadgeClasses(match.status as MatchStatus)
+                      }`}
+                    >
+                      {match.status === MatchStatus.LIVE && (
+                        <span className="mr-1.5 h-2 w-2 rounded-full bg-red-600"></span>
+                      )}
+                      {match.status}
+                    </span>
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4">
+                    <span className="inline-flex items-center rounded-md bg-indigo-50 px-2.5 py-1 text-sm font-medium text-indigo-700 ring-1 ring-inset ring-indigo-200">
+                      {formatMatchPhase(match.phase as MatchPhase)}
+                    </span>
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4">
+                    <div className="flex space-x-2">
+                      {match.status === MatchStatus.COMING && (
                         <button
-                          onClick={() => handleEndMatch(match._id as string)}
+                          onClick={() => handleStartMatch(match._id as string)}
                           disabled={isUpdating}
-                          className="inline-flex items-center rounded-md bg-green-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-green-500 disabled:bg-green-300 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 transition-all duration-200"
+                          className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:bg-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 transition-all duration-200"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                           </svg>
-                          Save
+                          Start
                         </button>
+                      )}
+                      
+                      {match.status !== MatchStatus.FINISHED && (
                         <button
-                          onClick={cancelEditingScore}
-                          disabled={isUpdating}
-                          className="inline-flex items-center rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50"
+                          onClick={() => openScoreModal(match)}
+                          className="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 transition-all duration-200"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clipRule="evenodd" />
                           </svg>
-                          Cancel
+                          End
                         </button>
-                      </>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {matches.length === 0 && (
-              <tr>
-                <td colSpan={6} className="py-8 text-center">
-                  <div className="flex flex-col items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-indigo-200 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <p className="text-gray-500 text-lg font-medium">No matches scheduled yet</p>
-                    <p className="text-gray-400 text-sm mt-1">Add your first match to get started</p>
-                  </div>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {matches.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center">
+                    <div className="flex flex-col items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-indigo-200 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <p className="text-gray-500 text-lg font-medium">No matches scheduled yet</p>
+                      <p className="text-gray-400 text-sm mt-1">Add your first match to get started</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+
+      {/* Score and Scorer Modal */}
+      {showModal && selectedMatch && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            {/* Background overlay */}
+            <div 
+              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
+              onClick={closeModal}
+              aria-hidden="true"
+            ></div>
+
+            {/* Modal panel */}
+            <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-3xl sm:align-middle">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="sm:flex sm:items-start">
+                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                    <h3 className="text-lg font-medium leading-6 text-gray-900">
+                      End Match: {(selectedMatch.teamA as ITeam)?.name} vs {(selectedMatch.teamB as ITeam)?.name}
+                    </h3>
+                    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Team A */}
+                      <div className="bg-indigo-50 rounded-lg p-4">
+                        <h4 className="font-bold text-indigo-700 mb-4">
+                          {(selectedMatch.teamA as ITeam)?.name}
+                        </h4>
+                        
+                        <div className="mb-4">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Final Score
+                          </label>
+                          <input
+                            type="number"
+                            min="0"
+                            value={teamAScore}
+                            onChange={(e) => setTeamAScore(parseInt(e.target.value) || 0)}
+                            className="w-full rounded-md border border-indigo-300 p-2 text-center text-indigo-700 font-semibold focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                          />
+                        </div>
+                        
+                        <div className="mb-4">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Goal Scorers
+                          </label>
+                          <div className="flex space-x-2">
+                            <input
+                              type="text"
+                              value={newTeamAScorer}
+                              onChange={(e) => setNewTeamAScorer(e.target.value)}
+                              placeholder="Player name"
+                              className="flex-1 rounded-md border border-indigo-300 p-2 text-indigo-700 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            />
+                          </div>
+                          <div>
+                          <button
+                              onClick={addTeamAScorer}
+                              className="inline-flex w-full items-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 transition-all duration-200"
+                            >
+                              Add
+                            </button>
+                          </div>
+                        </div>
+                        
+                        {/* Scorer list */}
+                        <div className="mt-2 max-h-48 overflow-y-auto">
+                          {teamAScorers.length > 0 ? (
+                            <ul className="space-y-2">
+                              {teamAScorers.map((scorer, index) => (
+                                <li key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
+                                  <span className="font-medium text-indigo-700">
+                                    {scorer}
+                                  </span>
+                                  <button
+                                    onClick={() => removeTeamAScorer(index)}
+                                    className="text-red-500 hover:text-red-700"
+                                  >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                    </svg>
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="text-center text-gray-500 py-2">No scorers added</p>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Team B */}
+                      <div className="bg-purple-50 rounded-lg p-4">
+                        <h4 className="font-bold text-purple-700 mb-4">
+                          {(selectedMatch.teamB as ITeam)?.name}
+                        </h4>
+                        
+                        <div className="mb-4">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Final Score
+                          </label>
+                          <input
+                            type="number"
+                            min="0"
+                            value={teamBScore}
+                            onChange={(e) => setTeamBScore(parseInt(e.target.value) || 0)}
+                            className="w-full rounded-md border border-purple-300 p-2 text-center text-purple-700 font-semibold focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50"
+                          />
+                        </div>
+                        
+                        <div className="mb-4">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Goal Scorers
+                          </label>
+                          <div className="flex space-x-2">
+                            <input
+                              type="text"
+                              value={newTeamBScorer}
+                              onChange={(e) => setNewTeamBScorer(e.target.value)}
+                              placeholder="Player name"
+                              className="flex-1 rounded-md border border-purple-300 p-2 text-purple-700 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50"
+                            />
+                          </div>
+                          <div>
+                            <button onClick={addTeamBScorer} className="inline-flex items-center w-full rounded-md bg-purple-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 transition-all duration-200">
+                            Add</button>
+                          </div>
+                        </div>
+                        
+                        {/* Scorer list */}
+                        <div className="mt-2 max-h-48 overflow-y-auto">
+                          {teamBScorers.length > 0 ? (
+                            <ul className="space-y-2">
+                              {teamBScorers.map((scorer, index) => (
+                                <li key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
+                                  <span className="font-medium text-purple-700">
+                                    {scorer}
+                                  </span>
+                                  <button
+                                    onClick={() => removeTeamBScorer(index)}
+                                    className="text-red-500 hover:text-red-700"
+                                  >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                    </svg>
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="text-center text-gray-500 py-2">No scorers added</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button
+                  type="button"
+                  onClick={handleEndMatch}
+                  disabled={isUpdating}
+                  className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                >
+                  {isUpdating ? 'Saving...' : 'End Match'}
+                </button>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  disabled={isUpdating}
+                  className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
