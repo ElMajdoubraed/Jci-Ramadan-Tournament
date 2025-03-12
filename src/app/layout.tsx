@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Suspense } from 'react';
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import { Analytics } from "@vercel/analytics/react"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -67,6 +68,7 @@ export default function RootLayout({
         </h1>
         <Suspense fallback={null}>
           <GoogleAnalytics />
+          <Analytics />
         </Suspense>
         {children}
       </body>
