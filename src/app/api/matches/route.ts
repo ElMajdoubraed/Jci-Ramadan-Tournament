@@ -40,8 +40,8 @@ export async function GET(request: NextRequest) {
 
     // Find matches with optional date filter
     const matches = await Match.find(query)
-      .populate('teamA', 'name flagUrl')
-      .populate('teamB', 'name flagUrl')
+      .populate('teamA', 'name image')
+      .populate('teamB', 'name image')
       .sort({ date: -1, time: 1 });
     
     return NextResponse.json(matches);
