@@ -4,9 +4,10 @@ import Match, { MatchStatus, MatchPhase, IMatch } from '@/models/Match';
 import Team, { ITeam } from '@/models/Team';
 import mongoose, { Error } from 'mongoose';
 
+
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: any
 ) {
   try {
     await connectToDatabase();

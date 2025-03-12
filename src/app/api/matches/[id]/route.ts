@@ -5,10 +5,10 @@ import mongoose from 'mongoose';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: any
 ) {
   try {
-    const { id } = params;
+    const { id } = context.params;
     
     // Validate MongoDB ID format
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -44,10 +44,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: any
 ) {
   try {
-    const { id } = params;
+    const { id } = context.params;
     const data = await request.json();
     const { status } = data;
     
