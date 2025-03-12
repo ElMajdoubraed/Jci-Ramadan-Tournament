@@ -36,7 +36,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "JCI Hammem Laghzez Ramadan Football Tournament - Live Scores & Fixtures",
     description: "Follow live scores, match updates, player stats, and standings from the JCI Laghzez Ramadan Football Tournament.",
-    site: "@jci_laghzez",
     images: ["jci.jpg"],
   },
   applicationName: "JCI Hammem Laghzez Football",
