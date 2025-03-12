@@ -62,6 +62,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <h1 className="hidden">
+          JCI Hammem Laghzez Ramadan Football Tournament - Live Scores, Fixtures & Standings
+        </h1>
         <Suspense fallback={null}>
           <GoogleAnalytics />
         </Suspense>
