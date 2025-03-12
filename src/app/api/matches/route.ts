@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     const matches = await Match.find(query)
       .populate('teamA', 'name flagUrl')
       .populate('teamB', 'name flagUrl')
-      .sort({ date: 1, time: 1 });
+      .sort({ date: -1, time: 1 });
     
     return NextResponse.json(matches);
   } catch (error) {
