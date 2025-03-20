@@ -100,11 +100,12 @@ const TeamDetail = ({ team, onBack }: { team: ITeam; onBack: () => void }) => {
         <div className="flex flex-wrap justify-between items-center mb-4">
           <div className="flex items-center mb-2 md:mb-0">
             <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 mr-3">
-              {team.image ? (
+            👤
+              {/* {team.image ? (
                 <img src={team.image} alt={team.name} className="w-full h-full object-cover rounded-full" />
               ) : (
                 '👤'
-              )}
+              )} */}
             </div>
             <div>
               <div className="text-sm text-gray-500">Captain</div>
@@ -152,11 +153,12 @@ const TeamListItem = ({ team, onSelect }: { team: ITeam; onSelect: () => void })
     <div className="flex justify-between items-center">
       <div className="flex items-center">
         <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-lg mr-3">
-          {team.image ? (
+        ⚽
+          {/* {team.image ? (
             <img src={team.image} alt={team.name} className="w-full h-full object-cover rounded-full" />
           ) : (
             '⚽'
-          )}
+          )} */}
         </div>
         <div>
           <div className="font-medium">{team.name}</div>

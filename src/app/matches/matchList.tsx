@@ -94,7 +94,8 @@ export default function MatchList({ date, stage, showDate = false }: MatchListPr
                       )}
                     </div>
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-700">
-                      {teamA.image ? (
+                    🏆
+                      {/* {teamA.image ? (
                         <img 
                           src={teamA.image} 
                           alt={`${teamA.name} flag`} 
@@ -102,7 +103,7 @@ export default function MatchList({ date, stage, showDate = false }: MatchListPr
                         />
                       ) : (
                         '🏆'
-                      )}
+                      )} */}
                     </div>
                   </div>
                   
@@ -117,7 +118,8 @@ export default function MatchList({ date, stage, showDate = false }: MatchListPr
                   
                   <div className="flex-1 flex items-center justify-center md:justify-start w-full md:w-auto">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-700">
-                      {teamB.image ? (
+                    🏆
+                      {/* {teamB.image ? (
                         <img 
                           src={teamB.image} 
                           alt={`${teamB.name} flag`} 
@@ -125,7 +127,7 @@ export default function MatchList({ date, stage, showDate = false }: MatchListPr
                         />
                       ) : (
                         '🏆'
-                      )}
+                      )} */}
                     </div>
                     <div className="ml-3">
                       <div className="font-semibold text-base sm:text-lg">{teamB.name}</div>

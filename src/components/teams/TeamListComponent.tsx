@@ -56,7 +56,10 @@ export default function TeamListComponent({ teams, onRefresh }: TeamListProps) {
                 <td className="whitespace-nowrap px-6 py-4">
                   <div className="flex items-center">
                     <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-indigo-100">
-                      {team.image ? (
+                    <div className="flex h-full w-full items-center justify-center text-indigo-500 font-bold">
+                          {team.name.charAt(0)}
+                        </div>
+                      {/* {team.image ? (
                         <img 
                           src={team.image} 
                           alt={team.name} 
@@ -66,7 +69,7 @@ export default function TeamListComponent({ teams, onRefresh }: TeamListProps) {
                         <div className="flex h-full w-full items-center justify-center text-indigo-500 font-bold">
                           {team.name.charAt(0)}
                         </div>
-                      )}
+                      )} */}
                     </div>
                     <div className="ml-4">
                       <div className="text-sm font-bold text-gray-900">{team.name}</div>

@@ -146,9 +146,10 @@ function MatchDetail() {
           <div className="flex justify-between items-center">
             <div className="text-center flex-1">
               <div className="flex flex-col items-center">
-                {teamA.image && (
+              🏆
+                {/* {teamA.image && (
                   <img src={teamA.image} alt={teamA.name} className="w-16 h-16 object-cover rounded-full mb-2 border-2 border-white" />
-                )}
+                )} */}
                 <div className="text-xl font-bold mb-1">{teamA.name}</div>
                 <div className="text-4xl font-bold">{match.teamAScore}</div>
               </div>
@@ -161,9 +162,10 @@ function MatchDetail() {
             
             <div className="text-center flex-1">
               <div className="flex flex-col items-center">
-                {teamB.image && (
+              🏆
+                {/* {teamB.image && (
                   <img src={teamB.image} alt={teamB.name} className="w-16 h-16 object-cover rounded-full mb-2 border-2 border-white" />
-                )}
+                )} */}
                 <div className="text-xl font-bold mb-1">{teamB.name}</div>
                 <div className="text-4xl font-bold">{match.teamBScore}</div>
               </div>

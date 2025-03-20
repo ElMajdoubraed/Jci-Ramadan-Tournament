@@ -3,8 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import MatchList from './matchList';
 
 function Matches() {
-  const startDate = new Date('2025-03-20');
-  const endDate = new Date('2025-03-30');
+  const startDate = new Date('2025-03-21');
+  const endDate = new Date('2025-03-31');
 
    // Generate dates array
    const dates: Date[] = [];
