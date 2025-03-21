@@ -86,7 +86,7 @@ export default function TeamListComponent({ teams, onRefresh }: TeamListProps) {
                     <svg className="mr-2 h-4 w-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
                     </svg>
-                    {team.captainName}
+                    { team.captainName ? team.captainName : '' }
                   </div>
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">

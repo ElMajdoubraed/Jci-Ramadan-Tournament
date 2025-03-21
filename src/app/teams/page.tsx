@@ -109,7 +109,7 @@ const TeamDetail = ({ team, onBack }: { team: ITeam; onBack: () => void }) => {
             </div>
             <div>
               <div className="text-sm text-gray-500">Captain</div>
-              <div className="font-medium">{team.captainName}</div>
+              { team.captainName && <div className="font-medium">{team.captainName}</div> }
             </div>
           </div>
           
@@ -162,7 +162,7 @@ const TeamListItem = ({ team, onSelect }: { team: ITeam; onSelect: () => void })
         </div>
         <div>
           <div className="font-medium">{team.name}</div>
-          <div className="text-xs text-gray-500">Captain: {team.captainName}</div>
+          {team.captainName &&  <div className="text-xs text-gray-500">Captain: {team.captainName}</div>}
         </div>
       </div>
       
