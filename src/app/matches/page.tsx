@@ -4,7 +4,7 @@ import MatchList from './matchList';
 
 function Matches() {
   const startDate = new Date('2025-03-21');
-  const endDate = new Date('2025-03-31');
+  const endDate = new Date('2025-03-29');
 
    // Generate dates array
    const dates: Date[] = [];
