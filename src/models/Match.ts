@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document, Model, model } from 'mongoose';
 import { ITeam } from './Team';
+import Team from './Team';
 
 // Define enums for match status and phase
 export enum MatchStatus {

@@ -13,22 +13,22 @@ function Matches() {
    }
   
   // Initialize with today's date if within range, otherwise use startDate
-  const [selectedDate, setSelectedDate] = useState<Date>(startDate);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   // Reference for the scrollable container
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   // Set today's date on mount if within range and scroll to selected date
-  useEffect(() => {
-    const today = new Date();
-    const todayTime = today.setHours(0, 0, 0, 0);
-    const startTime = new Date(startDate).setHours(0, 0, 0, 0);
-    const endTime = new Date(endDate).setHours(0, 0, 0, 0);
+  // useEffect(() => {
+  //   const today = new Date();
+  //   const todayTime = today.setHours(0, 0, 0, 0);
+  //   const startTime = new Date(startDate).setHours(0, 0, 0, 0);
+  //   const endTime = new Date(endDate).setHours(0, 0, 0, 0);
     
-    if (todayTime >= startTime && todayTime <= endTime) {
-      setSelectedDate(today);
-    }
-  }, []);
+  //   if (todayTime >= startTime && todayTime <= endTime) {
+  //     setSelectedDate(today);
+  //   }
+  // }, []);
   
   // Scroll to selected date whenever it changes
   useEffect(() => {
@@ -61,8 +61,8 @@ function Matches() {
   
   // Format date for display
   const formatDate = (date: Date) => {
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+    const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
     
     return {
       day: days[date.getDay()],
@@ -95,9 +95,9 @@ function Matches() {
   return (
     <div className="space-y-4 w-full max-w-4xl mx-auto px-3">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
-        <h2 className="text-xl font-semibold text-emerald-700">Match Schedule</h2>
+        <h2 className="text-xl font-semibold text-emerald-700">Calendrier des Matchs</h2>
         <div className="text-sm text-gray-500">
-          {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+          {selectedDate.toLocaleDateString('fr-FR', { weekday: 'long', month: 'long', day: 'numeric' })}
         </div>
       </div>
       
@@ -108,7 +108,7 @@ function Matches() {
             disabled={selectedDate <= startDate}
             className={`h-8 w-8 rounded-full flex items-center justify-center shadow-sm 
               ${selectedDate <= startDate ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-emerald-600 hover:bg-emerald-50'}`}
-            aria-label="Previous day"
+            aria-label="Jour précédent"
           >
             ←
           </button>
@@ -145,7 +145,7 @@ function Matches() {
             disabled={selectedDate >= endDate}
             className={`h-8 w-8 rounded-full flex items-center justify-center shadow-sm
               ${selectedDate >= endDate ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-emerald-600 hover:bg-emerald-50'}`}
-            aria-label="Next day"
+            aria-label="Jour suivant"
           >
             →
           </button>

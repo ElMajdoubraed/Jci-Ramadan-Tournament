@@ -107,13 +107,13 @@ function MatchDetail() {
     if (count === 1) return null;
     
     if (count === 2) {
-      return <span className="ml-2 text-xs text-gray-500">(Brace)</span>;
+      return <span className="ml-2 text-xs text-gray-500">(Doublé)</span>;
     }
     
     if (count === 3) {
       return (
         <span className="ml-2 text-xs text-yellow-600 font-medium flex items-center">
-          <span className="mr-1">Hat-trick</span>
+          <span className="mr-1">Triplé</span>
           <span className="flex">
             {"⚽".repeat(3)}
           </span>
@@ -121,7 +121,7 @@ function MatchDetail() {
       );
     }
     
-    return <span className="ml-2 text-xs text-yellow-600 font-medium">{count} goals</span>;
+    return <span className="ml-2 text-xs text-yellow-600 font-medium">{count} buts</span>;
   };
 
   return (
@@ -133,14 +133,14 @@ function MatchDetail() {
         <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
-        Back to Matches
+        Retour aux Matchs
       </Link>
 
       <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
         {/* Match header */}
         <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-6 text-white">
           <div className="text-center mb-3 text-emerald-50 font-medium">
-            {new Date(match.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })} • {match.time}
+            {new Date(match.date).toLocaleDateString('fr-FR', { weekday: 'long', month: 'long', day: 'numeric' })} • {match.time}
           </div>
           
           <div className="flex justify-between items-center">
@@ -156,8 +156,8 @@ function MatchDetail() {
             </div>
             
             <div className="mx-4 px-3 py-1 bg-gray-50/15 rounded-md text-sm font-semibold">
-              {match.status === MatchStatus.FINISHED ? 'FULL TIME' : 
-               match.status === MatchStatus.LIVE ? 'LIVE' : 'UPCOMING'}
+              {match.status === MatchStatus.FINISHED ? 'TEMPS COMPLET' : 
+               match.status === MatchStatus.LIVE ? 'EN DIRECT' : 'À VENIR'}
             </div>
             
             <div className="text-center flex-1">
@@ -176,7 +176,7 @@ function MatchDetail() {
         {/* Match details */}
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-gray-700">Scorers</h2>
+            <h2 className="text-xl font-bold text-gray-700">Buteurs</h2>
             <div className="text-sm bg-gray-100 px-3 py-1 rounded-full text-gray-600">
               {match.phase}
             </div>
@@ -193,7 +193,7 @@ function MatchDetail() {
                       <div className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 text-xs font-bold mr-2">
                         A
                       </div>
-                      {teamA.name} Scorers
+                      Buteurs de {teamA.name}
                     </h3>
                     <div className="space-y-2">
                       {teamAScorers.map((player, index) => (
@@ -224,7 +224,7 @@ function MatchDetail() {
                       <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-700 text-xs font-bold mr-2">
                         B
                       </div>
-                      {teamB.name} Scorers
+                      Buteurs de {teamB.name}
                     </h3>
                     <div className="space-y-2">
                       {teamBScorers.map((player, index) => (
@@ -251,11 +251,11 @@ function MatchDetail() {
             ) : (
               match.status === MatchStatus.COMING ? (
                 <div className="text-center py-6 text-gray-500">
-                  Match has not started yet
+                  Le match n'a pas encore commencé
                 </div>
               ) : (
                 <div className="text-center py-6 text-gray-500">
-                  No goals in this match
+                  Aucun but dans ce match
                 </div>
               )
             )}

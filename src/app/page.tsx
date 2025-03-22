@@ -6,14 +6,14 @@ import AllTeamsComponent from './teams/page';
 import ResultsComponent from './results/page';
 
 const tabs = [
-  { name: 'Matches', component: Matches, icon: '⚽' },
-  { name: 'Standings', component: Standings, icon: '🏆' },
-  { name: 'All Teams', component: Teams, icon: '👥' },
-  { name: 'Results', component: Results, icon: '📊' },
+  { name: 'Matchs', component: Matches, icon: '⚽' },
+  { name: 'Classements', component: Standings, icon: '🏆' },
+  { name: 'Équipes', component: Teams, icon: '👥' },
+  { name: 'Résultats', component: Results, icon: '📊' },
 ];
 
 function App() {
-  const [activeTab, setActiveTab] = useState('Matches');
+  const [activeTab, setActiveTab] = useState('Matchs');
   const ActiveComponent = tabs.find((tab) => tab.name === activeTab)?.component || Matches;
 
   return (
@@ -26,7 +26,7 @@ function App() {
                 ⚽
               </span>
               <span>
-                <span className="text-amber-300">JCI</span> Ramadan Tournament
+                <span className="text-amber-300">JCI</span> Tournoi Ramadan
               </span>
             </h1>
             <div className="text-white text-opacity-80 text-sm hidden md:block">Ramadan 2025</div>
@@ -58,7 +58,7 @@ function App() {
         </main>
         
         <footer className="p-4 text-center text-sm text-gray-500 bg-gray-50 border-t border-gray-100">
-          © 2025 JCI Ramadan Football Tournament. All rights reserved.
+          © 2025 Tournoi de Football Ramadan JCI. Tous droits réservés.
         </footer>
       </div>
     </div>
@@ -93,8 +93,8 @@ function Results() {
   return (
     <div className="text-center p-4">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-emerald-700 mb-2">Match Results</h2>
-        <p className="text-gray-600">Complete history of match outcomes</p>
+        <h2 className="text-2xl font-bold text-emerald-700 mb-2">Résultats des Matchs</h2>
+        <p className="text-gray-600">Historique complet des résultats des matchs</p>
       </div>
       <ResultsComponent />
     </div>

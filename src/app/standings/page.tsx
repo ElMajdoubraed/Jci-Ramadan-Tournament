@@ -7,17 +7,17 @@ function Standings() {
   const [activeStage, setActiveStage] = useState('Group Stage');
   
   const stages = [
-    { id: 'Group Stage', name: 'Group Stage', icon: '👥' },
-    { id: 'Final Stage', name: 'Final Stage', icon: '🏆' }
+    { id: 'Group Stage', name: 'Phase de Groupes', icon: '👥' },
+    { id: 'Final Stage', name: 'Phase Finale', icon: '🏆' }
   ];
 
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="bg-gradient-to-r from-emerald-700 to-emerald-600 p-4">
-          <h2 className="text-xl font-bold text-white text-center">Tournament Progress</h2>
+          <h2 className="text-xl font-bold text-white text-center">Progression du Tournoi</h2>
           <p className="text-emerald-100 text-sm text-center mt-1">
-            Follow the competition from group stages to the finals
+            Suivez la compétition des phases de groupes jusqu'à la finale
           </p>
         </div>
         
@@ -58,8 +58,8 @@ function Standings() {
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-white px-4 py-1 rounded-full shadow-sm z-10">
           <span className="text-sm font-medium text-emerald-700">
             {activeStage === 'Group Stage' 
-              ? 'Teams competing in groups' 
-              : 'Knockout matches'}
+              ? 'Équipes en compétition dans les groupes' 
+              : 'Matchs à élimination directe'}
           </span>
         </div>
         

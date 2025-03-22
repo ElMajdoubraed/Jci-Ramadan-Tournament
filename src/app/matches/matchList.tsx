@@ -66,10 +66,10 @@ export default function MatchList({ date, stage, showDate = false }: MatchListPr
       {showDate && (
         <div className="flex flex-col sm:flex-row items-center justify-between mb-4 gap-2">
           <h2 className="text-lg sm:text-xl font-bold text-emerald-700">
-            Matches on {date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+            Matchs du {date.toLocaleDateString('fr-FR', { weekday: 'short', month: 'short', day: 'numeric' })}
           </h2>
           <span className="text-sm bg-emerald-100 text-emerald-800 py-1 px-3 rounded-full whitespace-nowrap">
-            {hasMatches ? `${matches.length} match${matches.length > 1 ? 'es' : ''}` : 'No matches'}
+            {hasMatches ? `${matches.length} match${matches.length > 1 ? 's' : ''}` : 'Aucun match'}
           </span>
         </div>
       )}
@@ -110,7 +110,7 @@ export default function MatchList({ date, stage, showDate = false }: MatchListPr
                   <div className="mx-2 sm:mx-6 flex flex-col items-center">
                     {match.status === MatchStatus.LIVE && (
                       <div className="bg-red-100 text-red-600 px-2 py-0.5 rounded-full text-xs font-semibold mb-1 animate-pulse">
-                        LIVE
+                        EN DIRECT
                       </div>
                     )}
                     <div className="text-gray-500 text-xs uppercase font-semibold">VS</div>
@@ -147,7 +147,7 @@ export default function MatchList({ date, stage, showDate = false }: MatchListPr
                           ? 'bg-red-50 text-red-600'
                           : 'bg-gray-100 text-gray-600'
                     }`}>
-                      {match.status === MatchStatus.FINISHED ? 'Finished' : match.time}
+                      {match.status === MatchStatus.FINISHED ? 'Terminé' : match.time}
                     </div>
                     <div className="text-xs text-gray-500">
                       {match.phase}
@@ -157,12 +157,12 @@ export default function MatchList({ date, stage, showDate = false }: MatchListPr
                     href={`/matches/${match._id}`}
                     className="text-sm bg-white border border-emerald-500 text-emerald-600 py-1 px-4 rounded-full hover:bg-emerald-50 transition-colors"
                   >
-                    Details
+                    Détails
                   </Link>
                 </div>
                 {showDate && (
                   <div className="text-xs text-gray-500 text-center mt-4">
-                    {new Date(match.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    {new Date(match.date).toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' })}
                   </div>
                 )}
               </div>
@@ -172,8 +172,8 @@ export default function MatchList({ date, stage, showDate = false }: MatchListPr
       ) : (
         <div className="bg-gray-50 p-4 sm:p-8 rounded-lg text-center">
           <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">⚽</div>
-          <h3 className="text-lg sm:text-xl font-medium text-gray-700">No matches scheduled</h3>
-          <p className="text-sm sm:text-base text-gray-500 mt-2">There are no matches scheduled for this date.</p>
+          <h3 className="text-lg sm:text-xl font-medium text-gray-700">Aucun match programmé</h3>
+          <p className="text-sm sm:text-base text-gray-500 mt-2">Il n'y a pas de matchs programmés pour cette date.</p>
         </div>
       )}
     </div>

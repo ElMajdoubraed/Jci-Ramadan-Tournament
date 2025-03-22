@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongoose';
+import Team from '@/models/Team';
 import Match from '@/models/Match';
 
 export async function GET(request: NextRequest) {
@@ -14,18 +15,9 @@ export async function GET(request: NextRequest) {
 
     // If date is provided, filter by that date
     if (date) {
-      const startDate = new Date(date);
-      startDate.setHours(0, 0, 0, 0);
-      
-      const endDate = new Date(date);
-      endDate.setHours(23, 59, 59, 999);
-
-      query = {
-        date: {
-          $gte: startDate,
-          $lte: endDate
-        }
-      };
+      const formattedDate = new Date(date).toISOString()
+      console.log('formattedDate:', formattedDate);
+      query = { date: formattedDate };
     } else if (stage) {
       let phase = stage;
       if (stage === 'Quarterfinals') {
@@ -37,6 +29,8 @@ export async function GET(request: NextRequest) {
       }
       query = { phase };
     }
+
+    const teams = await Team.find();
 
     // Find matches with optional date filter
     const matches = await Match.find(query)

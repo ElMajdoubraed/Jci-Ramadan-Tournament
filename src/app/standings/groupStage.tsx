@@ -42,7 +42,7 @@ function GroupStage() {
   // Sort grouped teams by points
   const sortedGroups = Object.entries(groupedTeams).map(([groupName, groupTeams]) => {
     return {
-      name: `Group ${groupName}`,
+      name: `Groupe ${groupName}`,
       teams: [...groupTeams].sort((a, b) => {
         // First sort by points
         if (a.groupStageDetails.points !== b.groupStageDetails.points) {
@@ -95,22 +95,22 @@ function GroupStage() {
           
           {/* Desktop Table header - hidden on very small screens */}
           <div className="hidden xs:grid px-3 sm:px-4 py-2 sm:py-3 bg-emerald-50 text-2xs xs:text-xs text-emerald-800 font-medium grid-cols-12 gap-1">
-            <div className="col-span-4">Team</div>
+            <div className="col-span-4">Équipe</div>
+            <div className="col-span-1 text-center">J</div>
+            <div className="col-span-1 text-center">G</div>
+            <div className="col-span-1 text-center">N</div>
             <div className="col-span-1 text-center">P</div>
-            <div className="col-span-1 text-center">W</div>
-            <div className="col-span-1 text-center">D</div>
-            <div className="col-span-1 text-center">L</div>
-            <div className="col-span-1 text-center">GF</div>
-            <div className="col-span-1 text-center">GA</div>
-            <div className="col-span-1 text-center">GD</div>
+            <div className="col-span-1 text-center">BP</div>
+            <div className="col-span-1 text-center">BC</div>
+            <div className="col-span-1 text-center">DB</div>
             <div className="col-span-1 text-center font-bold">Pts</div>
           </div>
           
           {/* Mobile view - compact table with only essential info */}
           <div className="xs:hidden px-3 py-2 bg-emerald-50 text-2xs font-medium grid grid-cols-8 gap-1">
-            <div className="col-span-4">Team</div>
-            <div className="col-span-1 text-center">P</div>
-            <div className="col-span-1 text-center">GD</div>
+            <div className="col-span-4">Équipe</div>
+            <div className="col-span-1 text-center">J</div>
+            <div className="col-span-1 text-center">DB</div>
             <div className="col-span-2 text-center font-bold">Pts</div>
           </div>
           
@@ -130,7 +130,7 @@ function GroupStage() {
                     <div className="col-span-4 font-medium flex items-center">
                       <span className="inline-block w-5 text-center mr-2 text-2xs xs:text-xs text-gray-500">{index + 1}</span>
                       <span className={`truncate ${isQualifying ? "text-emerald-700" : ""}`}>{team.name}</span>
-                      {index === 0 && <span className="ml-2 text-2xs xs:text-xs bg-emerald-100 text-emerald-800 px-1 rounded">Leader</span>}
+                      {index === 0 && <span className="ml-2 text-2xs xs:text-xs bg-emerald-100 text-emerald-800 px-1 rounded">Meneur</span>}
                     </div>
                     <div className="col-span-1 text-center text-2xs xs:text-xs">{details.playedMatches}</div>
                     <div className="col-span-1 text-center text-2xs xs:text-xs">{details.wins}</div>
@@ -177,7 +177,7 @@ function GroupStage() {
           <div className="px-3 sm:px-4 py-2 bg-gray-50 text-2xs xs:text-xs text-gray-500 border-t border-gray-100">
             <div className="flex items-center">
               <span className="inline-block w-2 sm:w-3 h-2 sm:h-3 bg-emerald-500 mr-1"></span>
-              <span>Qualification zone</span>
+              <span>Zone de qualification</span>
             </div>
           </div>
         </div>
@@ -185,13 +185,13 @@ function GroupStage() {
       
       {/* Legend for abbreviations */}
       <div className="sm:col-span-2 bg-white p-3 rounded-lg shadow text-2xs xs:text-xs sm:text-sm text-gray-600 flex flex-wrap gap-x-3 sm:gap-x-6 gap-y-1 sm:gap-y-2 justify-center sm:justify-start">
-        <span><strong>P</strong>: Played</span>
-        <span><strong>W</strong>: Won</span>
-        <span><strong>D</strong>: Drawn</span>
-        <span><strong>L</strong>: Lost</span>
-        <span><strong>GF</strong>: Goals For</span>
-        <span><strong>GA</strong>: Goals Against</span>
-        <span><strong>GD</strong>: Goal Difference</span>
+        <span><strong>J</strong>: Joués</span>
+        <span><strong>G</strong>: Gagnés</span>
+        <span><strong>N</strong>: Nuls</span>
+        <span><strong>P</strong>: Perdus</span>
+        <span><strong>BP</strong>: Buts Pour</span>
+        <span><strong>BC</strong>: Buts Contre</span>
+        <span><strong>DB</strong>: Différence de Buts</span>
         <span><strong>Pts</strong>: Points</span>
       </div>
     </div>

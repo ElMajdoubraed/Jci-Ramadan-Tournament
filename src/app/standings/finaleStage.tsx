@@ -5,10 +5,10 @@ import MatchList from "../matches/matchList";
 
 function FinalStage() {
   const stages = [
-    { id: '1/8', name: '1/8 Finals', emoji: '🏁' },
-    { id: 'Quarterfinals', name: 'Quarter Finals', emoji: '🔥' },
-    { id: 'Semifinals', name: 'Semi Finals', emoji: '⚡' },
-    { id: 'Final', name: 'Final', emoji: '🏆' }
+    { id: '1/8', name: '1/8 de Finale', emoji: '🏁' },
+    { id: 'Quarterfinals', name: 'Quarts de Finale', emoji: '🔥' },
+    { id: 'Semifinals', name: 'Demi-finales', emoji: '⚡' },
+    { id: 'Final', name: 'Finale', emoji: '🏆' }
   ];
   
   const [activeFinalStage, setActiveFinalStage] = useState('1/8');
@@ -30,8 +30,8 @@ function FinalStage() {
   return (
     <div className="space-y-6 w-full max-w-4xl mx-auto px-3">
       <div className="bg-gradient-to-r from-emerald-700 to-emerald-600 p-4 rounded-lg text-white shadow-md">
-        <h2 className="text-lg sm:text-xl font-bold text-center mb-2">Tournament Knockout Stages</h2>
-        <p className="text-emerald-100 text-xs sm:text-sm text-center mb-4">Follow the journey to the championship</p>
+        <h2 className="text-lg sm:text-xl font-bold text-center mb-2">Phases Finales du Tournoi</h2>
+        <p className="text-emerald-100 text-xs sm:text-sm text-center mb-4">Suivez le parcours vers le championnat</p>
         
         <div className="relative px-2 pb-2 mt-5">
           {/* Progress bar */}
@@ -69,9 +69,9 @@ function FinalStage() {
                     {stage.name}
                   </span>
                   <span className="text-2xs text-emerald-200 mt-0.5 text-center">
-                    {index === 0 ? '16 Teams' : 
-                     index === 1 ? '8 Teams' : 
-                     index === 2 ? '4 Teams' : '2 Teams'}
+                    {index === 0 ? '16 Équipes' : 
+                     index === 1 ? '8 Équipes' : 
+                     index === 2 ? '4 Équipes' : '2 Équipes'}
                   </span>
                 </div>
               );
@@ -104,9 +104,9 @@ function FinalStage() {
                     {stage.name}
                   </span>
                   <span className="text-xs text-emerald-200 mt-1">
-                    {index === 0 ? '16 Teams' : 
-                     index === 1 ? '8 Teams' : 
-                     index === 2 ? '4 Teams' : '2 Teams'}
+                    {index === 0 ? '16 Équipes' : 
+                     index === 1 ? '8 Équipes' : 
+                     index === 2 ? '4 Équipes' : '2 Équipes'}
                   </span>
                 </div>
               );
@@ -119,7 +119,7 @@ function FinalStage() {
         <div className="flex items-center mb-4">
           <div className="w-1 h-8 bg-emerald-500 rounded-full mr-3"></div>
           <h3 className="text-lg sm:text-xl font-bold text-emerald-700">
-            {stages.find(s => s.id === activeFinalStage)?.name} Matches
+            Matchs {stages.find(s => s.id === activeFinalStage)?.name}
           </h3>
         </div>
         
