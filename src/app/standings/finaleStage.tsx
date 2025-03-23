@@ -5,13 +5,12 @@ import MatchList from "../matches/matchList";
 
 function FinalStage() {
   const stages = [
-    { id: '1/8', name: '1/8 de Finale', emoji: '🏁' },
     { id: 'Quarterfinals', name: 'Quarts de Finale', emoji: '🔥' },
     { id: 'Semifinals', name: 'Demi-finales', emoji: '⚡' },
     { id: 'Final', name: 'Finale', emoji: '🏆' }
   ];
   
-  const [activeFinalStage, setActiveFinalStage] = useState('1/8');
+  const [activeFinalStage, setActiveFinalStage] = useState('Quarterfinals');
   
   // Function to determine if a stage is completed
   const isStageCompleted = (stageId: string) => {

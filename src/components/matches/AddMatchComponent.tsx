@@ -86,7 +86,6 @@ export default function AddMatchComponent({ onMatchAdded }: AddMatchProps) {
   const getPhaseLabel = (p: MatchPhase): string => {
     switch(p) {
       case MatchPhase.GROUP: return 'Group Stage';
-      case MatchPhase.ROUND_OF_16: return 'Round of 16';
       case MatchPhase.QUARTER: return 'Quarter Finals';
       case MatchPhase.SEMI: return 'Semi Finals';
       case MatchPhase.FINAL: return 'Final';

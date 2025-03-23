@@ -11,7 +11,6 @@ export enum MatchStatus {
 
 export enum MatchPhase {
   GROUP = 'group',
-  ROUND_OF_16 = '1/8',
   QUARTER = 'quarter',
   SEMI = 'semi',
   FINAL = 'final'

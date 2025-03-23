@@ -19,9 +19,6 @@ export async function GET(request: NextRequest) {
           case 'Group Stage':
             phase = MatchPhase.GROUP;
             break;
-        case 'Round of 16':
-            phase = MatchPhase.ROUND_OF_16;
-            break;
         case 'Quarter Finals':
             phase = MatchPhase.QUARTER;
             break;
@@ -101,8 +98,6 @@ function getStageDisplay(phase: MatchPhase): string {
   switch (phase) {
     case MatchPhase.GROUP:
       return 'Group Stage';
-    case MatchPhase.ROUND_OF_16:
-      return 'Round of 16';
     case MatchPhase.QUARTER:
       return 'Quarter Finals';
     case MatchPhase.SEMI:

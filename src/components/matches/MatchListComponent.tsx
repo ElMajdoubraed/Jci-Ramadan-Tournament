@@ -142,8 +142,6 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
     switch (phase) {
       case MatchPhase.GROUP:
         return 'Group Stage';
-      case MatchPhase.ROUND_OF_16:
-        return 'Round of 16';
       case MatchPhase.QUARTER:
         return 'Quarter Finals';
       case MatchPhase.SEMI:
