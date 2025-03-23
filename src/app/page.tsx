@@ -51,8 +51,8 @@ function App() {
           ))}
         </nav>
         
-        <main className="p-4 md:p-6 bg-white min-h-[60vh]">
-          <div className="bg-white rounded-lg p-2">
+        <main className="p-0 sm:p-6 bg-white min-h-[60vh]">
+          <div className="bg-white rounded-lg p-0 sm:p-2">
             <ActiveComponent />
           </div>
         </main>

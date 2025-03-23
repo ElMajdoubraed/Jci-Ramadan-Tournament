@@ -55,7 +55,7 @@ function Standings() {
       
       <div className="relative">
         {/* Stage description */}
-        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-white px-4 py-1 rounded-full shadow-sm z-10">
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-white px-4 py-1 hidden sm:block rounded-full shadow-sm z-10">
           <span className="text-sm font-medium text-emerald-700">
             {activeStage === 'Group Stage' 
               ? 'Équipes en compétition dans les groupes' 
@@ -64,7 +64,7 @@ function Standings() {
         </div>
         
         {/* Content container with fade-in animation */}
-        <div className="bg-white rounded-lg shadow-md p-6 pt-8 transition-all duration-500 ease-in-out">
+        <div className="bg-white rounded-lg shadow-md p-0 sm:p-6 pt-8 transition-all duration-500 ease-in-out">
           {activeStage === 'Group Stage' ? (
             <div className="animate-fadeIn">
               <GroupStage />

@@ -86,15 +86,15 @@ function GroupStage() {
   }
 
   return (
-    <div className="grid sm:grid-cols-2 gap-6 w-full max-w-6xl mx-auto px-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 w-full max-w-6xl mx-auto px-2 md:px-3">
       {sortedGroups.map((group) => (
         <div key={group.name} className="overflow-hidden bg-white rounded-lg shadow-md">
-          <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 p-3">
-            <h3 className="text-lg sm:text-xl font-bold text-white">{group.name}</h3>
+          <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 p-2 md:p-3">
+            <h3 className="text-base sm:text-lg md:text-xl font-bold text-white text-center sm:text-left">{group.name}</h3>
           </div>
           
           {/* Desktop Table header - hidden on very small screens */}
-          <div className="hidden xs:grid px-3 sm:px-4 py-2 sm:py-3 bg-emerald-50 text-2xs xs:text-xs text-emerald-800 font-medium grid-cols-12 gap-1">
+          <div className="hidden xs:grid px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 bg-emerald-50 text-2xs xs:text-xs text-emerald-800 font-medium grid-cols-12 gap-1">
             <div className="col-span-4">Équipe</div>
             <div className="col-span-1 text-center">J</div>
             <div className="col-span-1 text-center">G</div>
@@ -107,7 +107,7 @@ function GroupStage() {
           </div>
           
           {/* Mobile view - compact table with only essential info */}
-          <div className="xs:hidden px-3 py-2 bg-emerald-50 text-2xs font-medium grid grid-cols-8 gap-1">
+          <div className="xs:hidden px-2 py-1.5 bg-emerald-50 text-2xs font-medium grid grid-cols-8 gap-1">
             <div className="col-span-4">Équipe</div>
             <div className="col-span-1 text-center">J</div>
             <div className="col-span-1 text-center">DB</div>
@@ -125,12 +125,12 @@ function GroupStage() {
                 <div key={`${team.name}-${index}`}>
                   {/* Desktop view */}
                   <div 
-                    className={`hidden xs:grid px-3 sm:px-4 py-2 sm:py-3 grid-cols-12 gap-1 items-center hover:bg-gray-50 ${getPositionClass(index)}`}
+                    className={`hidden xs:grid px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 grid-cols-12 gap-1 items-center hover:bg-gray-50 ${getPositionClass(index)}`}
                   >
                     <div className="col-span-4 font-medium flex items-center">
-                      <span className="inline-block w-5 text-center mr-2 text-2xs xs:text-xs text-gray-500">{index + 1}</span>
+                      <span className="inline-block w-4 sm:w-5 text-center mr-1 sm:mr-2 text-2xs xs:text-xs text-gray-500">{index + 1}</span>
                       <span className={`truncate ${isQualifying ? "text-emerald-700" : ""}`}>{team.name}</span>
-                      {index === 0 && <span className="ml-2 text-2xs xs:text-xs bg-emerald-100 text-emerald-800 px-1 rounded">Meneur</span>}
+                      {index === 0 && <span className="ml-1 sm:ml-2 text-2xs xs:text-xs bg-emerald-100 text-emerald-800 px-1 rounded">Meneur</span>}
                     </div>
                     <div className="col-span-1 text-center text-2xs xs:text-xs">{details.playedMatches}</div>
                     <div className="col-span-1 text-center text-2xs xs:text-xs">{details.wins}</div>
@@ -151,10 +151,10 @@ function GroupStage() {
                   
                   {/* Mobile view - compact */}
                   <div 
-                    className={`xs:hidden px-3 py-2 grid grid-cols-8 gap-1 items-center hover:bg-gray-50 ${getPositionClass(index)}`}
+                    className={`xs:hidden px-2 py-1.5 grid grid-cols-8 gap-1 items-center hover:bg-gray-50 ${getPositionClass(index)}`}
                   >
                     <div className="col-span-4 font-medium flex items-center overflow-hidden">
-                      <span className="inline-block w-4 text-center mr-1 text-2xs text-gray-500">{index + 1}</span>
+                      <span className="inline-block w-3.5 text-center mr-1 text-2xs text-gray-500">{index + 1}</span>
                       <span className={`truncate ${isQualifying ? "text-emerald-700" : ""}`}>{team.name}</span>
                     </div>
                     <div className="col-span-1 text-center text-2xs">{details.playedMatches}</div>
@@ -174,7 +174,7 @@ function GroupStage() {
           </div>
           
           {/* Legend */}
-          <div className="px-3 sm:px-4 py-2 bg-gray-50 text-2xs xs:text-xs text-gray-500 border-t border-gray-100">
+          <div className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-gray-50 text-2xs xs:text-xs text-gray-500 border-t border-gray-100">
             <div className="flex items-center">
               <span className="inline-block w-2 sm:w-3 h-2 sm:h-3 bg-emerald-500 mr-1"></span>
               <span>Zone de qualification</span>
@@ -184,7 +184,7 @@ function GroupStage() {
       ))}
       
       {/* Legend for abbreviations */}
-      <div className="sm:col-span-2 bg-white p-3 rounded-lg shadow text-2xs xs:text-xs sm:text-sm text-gray-600 flex flex-wrap gap-x-3 sm:gap-x-6 gap-y-1 sm:gap-y-2 justify-center sm:justify-start">
+      <div className="sm:col-span-2 bg-white p-2 md:p-3 rounded-lg shadow text-2xs xs:text-xs sm:text-sm text-gray-600 flex flex-wrap gap-x-2 sm:gap-x-3 md:gap-x-6 gap-y-1 sm:gap-y-2 justify-center sm:justify-start">
         <span><strong>J</strong>: Joués</span>
         <span><strong>G</strong>: Gagnés</span>
         <span><strong>N</strong>: Nuls</span>
