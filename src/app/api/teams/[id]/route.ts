@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongoose';
+import Team from '@/models/Team';
 import Match from '@/models/Match';
 import mongoose from 'mongoose';
 
@@ -13,30 +14,28 @@ export async function GET(
     // Validate MongoDB ID format
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
-        { message: 'Invalid match ID format' },
+        { message: 'Invalid team ID format' },
         { status: 400 }
       );
     }
 
     await connectToDatabase();
     
-    // Find match by ID and populate team data
-    const match = await Match.findById(id)
-      .populate('teamA')
-      .populate('teamB');
+    // Find team by ID
+    const team = await Team.findById(id);
     
-    if (!match) {
+    if (!team) {
       return NextResponse.json(
-        { message: 'Match not found' },
+        { message: 'Team not found' },
         { status: 404 }
       );
     }
     
-    return NextResponse.json(match);
+    return NextResponse.json(team);
   } catch (error) {
-    console.error('Error fetching match details:', error);
+    console.error('Error fetching team details:', error);
     return NextResponse.json(
-      { message: 'Error fetching match details' },
+      { message: 'Error fetching team details' },
       { status: 500 }
     );
   }
@@ -52,21 +51,21 @@ export async function PATCH(
     
     await connectToDatabase();
     
-    // Find match by ID and update with provided data
-    const match = await Match.findByIdAndUpdate(id, data, { new: true });
+    // Find team by ID and update with provided data
+    const team = await Team.findByIdAndUpdate(id, data, { new: true });
     
-    if (!match) {
+    if (!team) {
       return NextResponse.json(
-        { message: 'Match not found' },
+        { message: 'Team not found' },
         { status: 404 }
       );
     }
     
-    return NextResponse.json(match);
+    return NextResponse.json(team);
   } catch (error) {
-    console.error('Error updating match:', error);
+    console.error('Error updating team:', error);
     return NextResponse.json(
-      { message: 'Error updating match' },
+      { message: 'Error updating team' },
       { status: 500 }
     );
   }
@@ -82,28 +81,28 @@ export async function DELETE(
     // Validate MongoDB ID format
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
-        { message: 'Invalid match ID format' },
+        { message: 'Invalid team ID format' },
         { status: 400 }
       );
     }
 
     await connectToDatabase();
     
-    // Find match by ID and delete
-    const match = await Match.findByIdAndDelete(id);
+    // Find team by ID and delete
+    const team = await Team.findByIdAndDelete(id);
     
-    if (!match) {
+    if (!team) {
       return NextResponse.json(
-        { message: 'Match not found' },
+        { message: 'Team not found' },
         { status: 404 }
       );
     }
     
-    return NextResponse.json({ message: 'Match deleted successfully' });
+    return NextResponse.json({ message: 'Team deleted successfully' });
   } catch (error) {
-    console.error('Error deleting match:', error);
+    console.error('Error deleting team:', error);
     return NextResponse.json(
-      { message: 'Error deleting match' },
+      { message: 'Error deleting team' },
       { status: 500 }
     );
   }

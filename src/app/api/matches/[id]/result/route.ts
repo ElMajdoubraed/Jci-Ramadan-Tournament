@@ -6,10 +6,11 @@ import mongoose from 'mongoose';
 
 export async function PUT(
     request: Request,
+    context: any
 ) {
   try {
     await connectToDatabase();
-    const id = 'request.query.id;'
+    const { id } = context.params;
     const data = await request.json();
     const { teamAScore, teamBScore, teamAPlayerGoals, teamBPlayerGoals, status } = data;
     

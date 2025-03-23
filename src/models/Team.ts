@@ -55,7 +55,7 @@ const TeamSchema = new Schema<ITeam>({
   },
   goalsScored: { type: Number, default: 0 },
   goalsAccepted: { type: Number, default: 0 },
-  captainName: { type: String, required: true },
+  captainName: { type: String, required: false },
   wins: { type: Number, default: 0 },
   draws: { type: Number, default: 0 },
   losses: { type: Number, default: 0 },

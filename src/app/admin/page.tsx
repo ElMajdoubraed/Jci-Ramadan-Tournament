@@ -8,6 +8,7 @@ import AddTeamComponent from '@/components/teams/AddTeamComponent';
 import TeamListComponent from '@/components/teams/TeamListComponent';
 import AddMatchComponent from '@/components/matches/AddMatchComponent';
 import MatchListComponent from '@/components/matches/MatchListComponent';
+import ResetStatsComponent from '@/components/admin/ResetStatsComponent';
 
 export default function AdminPage() {
   const [teams, setTeams] = useState<ITeam[]>([]);
@@ -216,6 +217,17 @@ export default function AdminPage() {
               <MatchListComponent matches={matches} onRefresh={fetchMatches} />
             </>
           )}
+          
+          {/* Reset Stats Component - Always visible */}
+          <div className="mt-10 pt-6 border-t border-gray-200">
+            <h2 className="text-lg font-bold text-gray-900 mb-6">
+              Advanced Administration
+            </h2>
+            <ResetStatsComponent onComplete={() => {
+              fetchTeams();
+              fetchMatches();
+            }} />
+          </div>
         </div>
       </main>
     </div>

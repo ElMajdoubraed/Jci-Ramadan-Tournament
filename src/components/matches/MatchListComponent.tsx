@@ -12,6 +12,8 @@ interface MatchListProps {
 export default function MatchListComponent({ matches, onRefresh }: MatchListProps) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState<IMatch | null>(null);
   const [teamAScore, setTeamAScore] = useState(0);
   const [teamBScore, setTeamBScore] = useState(0);
@@ -19,6 +21,8 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
   const [teamBScorers, setTeamBScorers] = useState<string[]>([]);
   const [newTeamAScorer, setNewTeamAScorer] = useState('');
   const [newTeamBScorer, setNewTeamBScorer] = useState('');
+  const [matchDate, setMatchDate] = useState('');
+  const [matchTime, setMatchTime] = useState('');
 
   // Reset form when selected match changes
   useEffect(() => {
@@ -27,11 +31,23 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
       setTeamBScore(selectedMatch.teamBScore);
       setTeamAScorers(selectedMatch.teamAPlayerGoals || []);
       setTeamBScorers(selectedMatch.teamBPlayerGoals || []);
+      
+      // Format date for the date input (YYYY-MM-DD)
+      if (selectedMatch.date) {
+        const date = new Date(selectedMatch.date);
+        const formattedDate = date.toISOString().split('T')[0];
+        setMatchDate(formattedDate);
+      }
+      
+      // Set the time
+      setMatchTime(selectedMatch.time || '');
     } else {
       setTeamAScore(0);
       setTeamBScore(0);
       setTeamAScorers([]);
       setTeamBScorers([]);
+      setMatchDate('');
+      setMatchTime('');
     }
   }, [selectedMatch]);
 
@@ -70,7 +86,74 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
 
   const closeModal = () => {
     setShowModal(false);
+    setShowUpdateModal(false);
+    setShowDeleteModal(false);
     setSelectedMatch(null);
+  };
+  
+  const openUpdateModal = (match: IMatch) => {
+    setSelectedMatch(match);
+    setShowUpdateModal(true);
+  };
+  
+  const openDeleteModal = (match: IMatch) => {
+    setSelectedMatch(match);
+    setShowDeleteModal(true);
+  };
+  
+  const handleUpdateMatch = async () => {
+    if (isUpdating || !selectedMatch) return;
+    setIsUpdating(true);
+    
+    try {
+      const updatedMatchData = {
+        date: new Date(matchDate),
+        time: matchTime,
+      };
+      
+      const response = await fetch(`/api/matches/${selectedMatch._id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedMatchData),
+      });
+      
+      if (response.ok) {
+        closeModal();
+        onRefresh();
+      } else {
+        alert('Failed to update match');
+      }
+    } catch (error) {
+      console.error('Error updating match:', error);
+      alert('Error updating match');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+  
+  const handleDeleteMatch = async () => {
+    if (isUpdating || !selectedMatch) return;
+    setIsUpdating(true);
+    
+    try {
+      const response = await fetch(`/api/matches/${selectedMatch._id}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        closeModal();
+        onRefresh();
+      } else {
+        alert('Failed to delete match');
+      }
+    } catch (error) {
+      console.error('Error deleting match:', error);
+      alert('Error deleting match');
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   const addTeamAScorer = () => {
@@ -105,13 +188,13 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
     setTeamBScore(newScorers.length);
   };
 
-  const handleEndMatch = async () => {
+  const handleUpdateResult = async () => {
     if (isUpdating || !selectedMatch) return;
     setIsUpdating(true);
 
     try {
-      const response = await fetch(`/api/matches/${selectedMatch._id}/end`, {
-        method: 'PATCH',
+      const response = await fetch(`/api/matches/${selectedMatch._id}/result`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -120,7 +203,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
           teamBScore,
           teamAPlayerGoals: teamAScorers,
           teamBPlayerGoals: teamBScorers,
-          status: MatchStatus.FINISHED
+          status: selectedMatch.status === MatchStatus.LIVE ? MatchStatus.FINISHED : selectedMatch.status
         }),
       });
 
@@ -257,17 +340,41 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                         </button>
                       )}
                       
-                      {match.status !== MatchStatus.FINISHED && (
-                        <button
-                          onClick={() => openScoreModal(match)}
-                          className="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 transition-all duration-200"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <button
+                        onClick={() => openScoreModal(match)}
+                        className={`inline-flex items-center rounded-md ${match.status === MatchStatus.FINISHED ? 'bg-blue-600 hover:bg-blue-500' : 'bg-red-600 hover:bg-red-500'} px-3 py-1.5 text-sm font-semibold text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-all duration-200`}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                          {match.status !== MatchStatus.FINISHED ? (
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clipRule="evenodd" />
-                          </svg>
-                          End
-                        </button>
-                      )}
+                          ) : (
+                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                          )}
+                        </svg>
+                        {match.status !== MatchStatus.FINISHED ? 'End' : 'Update Score'}
+                      </button>
+                      
+                      {/* Update button - available for all matches */}
+                      <button
+                        onClick={() => openUpdateModal(match)}
+                        className="inline-flex items-center rounded-md bg-yellow-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 transition-all duration-200"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                        </svg>
+                        Update
+                      </button>
+                      
+                      {/* Delete button - available for all matches */}
+                      <button
+                        onClick={() => openDeleteModal(match)}
+                        className="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 transition-all duration-200"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        Delete
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -307,7 +414,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                     <h3 className="text-lg font-medium leading-6 text-gray-900">
-                      End Match: {(selectedMatch.teamA as ITeam)?.name} vs {(selectedMatch.teamB as ITeam)?.name}
+                      {selectedMatch.status === MatchStatus.FINISHED ? 'Update Score' : 'End Match'}: {(selectedMatch.teamA as ITeam)?.name} vs {(selectedMatch.teamB as ITeam)?.name}
                     </h3>
                     <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Team A */}
@@ -448,11 +555,136 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button
                   type="button"
-                  onClick={handleEndMatch}
+                  onClick={handleUpdateResult}
                   disabled={isUpdating}
                   className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                 >
-                  {isUpdating ? 'Saving...' : 'End Match'}
+                  {isUpdating ? 'Saving...' : (selectedMatch?.status === MatchStatus.LIVE ? 'End Match' : 'Update Score')}
+                </button>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  disabled={isUpdating}
+                  className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Update Match Modal */}
+      {showUpdateModal && selectedMatch && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            {/* Background overlay */}
+            <div 
+              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
+              onClick={closeModal}
+              aria-hidden="true"
+            ></div>
+
+            {/* Modal panel */}
+            <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="sm:flex sm:items-start">
+                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                    <h3 className="text-lg font-medium leading-6 text-gray-900">
+                      Update Match: {(selectedMatch.teamA as ITeam)?.name} vs {(selectedMatch.teamB as ITeam)?.name}
+                    </h3>
+                    <div className="mt-6 space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Match Date
+                        </label>
+                        <input
+                          type="date"
+                          value={matchDate}
+                          onChange={(e) => setMatchDate(e.target.value)}
+                          className="w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Match Time
+                        </label>
+                        <input
+                          type="time"
+                          value={matchTime}
+                          onChange={(e) => setMatchTime(e.target.value)}
+                          className="w-full rounded-md border border-gray-300 p-2 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button
+                  type="button"
+                  onClick={handleUpdateMatch}
+                  disabled={isUpdating}
+                  className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
+                >
+                  {isUpdating ? 'Saving...' : 'Update Match'}
+                </button>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  disabled={isUpdating}
+                  className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && selectedMatch && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            {/* Background overlay */}
+            <div 
+              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
+              onClick={closeModal}
+              aria-hidden="true"
+            ></div>
+
+            {/* Modal panel */}
+            <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="sm:flex sm:items-start">
+                  <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  </div>
+                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <h3 className="text-lg font-medium leading-6 text-gray-900">
+                      Delete Match
+                    </h3>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-500">
+                        Are you sure you want to delete the match between {(selectedMatch.teamA as ITeam)?.name} and {(selectedMatch.teamB as ITeam)?.name}? This action cannot be undone.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button
+                  type="button"
+                  onClick={handleDeleteMatch}
+                  disabled={isUpdating}
+                  className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                >
+                  {isUpdating ? 'Deleting...' : 'Delete'}
                 </button>
                 <button
                   type="button"

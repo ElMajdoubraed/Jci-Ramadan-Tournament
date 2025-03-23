@@ -74,7 +74,34 @@ const StatsTab = ({ team }: { team: ITeam }) => {
 
 // Team Detail Component
 const TeamDetail = ({ team, onBack }: { team: ITeam; onBack: () => void }) => {
-  const [activeTab, setActiveTab] = useState<'stats'>('stats');
+  const [activeTab, setActiveTab] = useState<'stats' | 'matches'>('stats');
+  const [matches, setMatches] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  
+  // Fetch team matches when team ID is available
+  useEffect(() => {
+    async function fetchTeamMatches() {
+      if (!team || !team._id) return;
+      
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/teams/${team._id}/matches`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch team matches');
+        }
+        
+        const matchesData = await response.json();
+        setMatches(matchesData);
+      } catch (err) {
+        console.error('Error fetching team matches:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchTeamMatches();
+  }, [team]);
   
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -131,14 +158,82 @@ const TeamDetail = ({ team, onBack }: { team: ITeam; onBack: () => void }) => {
         
         <div className="flex border-b border-gray-200 mb-4">
           <button
-            className="px-4 py-2 font-medium text-sm text-emerald-600 border-b-2 border-emerald-500"
+            className={`px-4 py-2 font-medium text-sm ${activeTab === 'stats' ? 'text-emerald-600 border-b-2 border-emerald-500' : 'text-gray-500 hover:text-emerald-500'}`}
             onClick={() => setActiveTab('stats')}
           >
             Statistics
           </button>
+          <button
+            className={`px-4 py-2 font-medium text-sm ${activeTab === 'matches' ? 'text-emerald-600 border-b-2 border-emerald-500' : 'text-gray-500 hover:text-emerald-500'}`}
+            onClick={() => setActiveTab('matches')}
+          >
+            Matches
+          </button>
         </div>
         
-        <StatsTab team={team} />
+        {activeTab === 'stats' && <StatsTab team={team} />}
+        {activeTab === 'matches' && (
+          <div className="bg-gray-50 p-4 rounded-lg">
+            {loading ? (
+              <div className="flex justify-center py-8">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-500"></div>
+              </div>
+            ) : matches.length > 0 ? (
+              <div className="divide-y divide-gray-200">
+                {matches.map((match) => (
+                  <div key={match._id} className="py-4 first:pt-0 last:pb-0">
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="text-xs text-gray-500">
+                        {new Date(match.date).toLocaleDateString()} • {match.time}
+                      </div>
+                      <div className={`text-xs px-2 py-1 rounded-full ${match.status === 'finished' ? 'bg-green-100 text-green-800' : match.status === 'live' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                        {match.status.charAt(0).toUpperCase() + match.status.slice(1)}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-center space-x-4">
+                      <div className="text-right flex-1">
+                        <div className="font-semibold">{match.teamA.name}</div>
+                        {match.status !== 'coming' && (
+                          <div className="mt-1">
+                            {match.teamAPlayerGoals && match.teamAPlayerGoals.map((scorer: string, idx: number) => (
+                              <div key={idx} className="text-xs text-gray-500">{scorer}</div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-col items-center justify-center">
+                        <div className="bg-white py-2 px-4 rounded-lg shadow-sm">
+                          <span className="text-lg font-bold">
+                            {match.status !== 'coming' ? `${match.teamAScore} - ${match.teamBScore}` : 'vs'}
+                          </span>
+                        </div>
+                        <div className="mt-1 text-xs text-gray-500">
+                          {match.phase === 'group' ? 'Group Stage' : 
+                           match.phase === 'quarter' ? 'Quarter Finals' : 
+                           match.phase === 'semi' ? 'Semi Finals' : 'Final'}
+                        </div>
+                      </div>
+                      <div className="text-left flex-1">
+                        <div className="font-semibold">{match.teamB.name}</div>
+                        {match.status !== 'coming' && (
+                          <div className="mt-1">
+                            {match.teamBPlayerGoals && match.teamBPlayerGoals.map((scorer: string, idx: number) => (
+                              <div key={idx} className="text-xs text-gray-500">{scorer}</div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                No matches found for this team
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
