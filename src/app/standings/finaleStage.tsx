@@ -5,9 +5,9 @@ import MatchList from "../matches/matchList";
 
 function FinalStage() {
   const stages = [
-    { id: 'Quarterfinals', name: 'Quarts de Finale', emoji: '🔥' },
-    { id: 'Semifinals', name: 'Demi-finales', emoji: '⚡' },
-    { id: 'Final', name: 'Finale', emoji: '🏆' }
+    { id: 'Quarterfinals', key: 'quarter',  name: 'Quarts de Finale', emoji: '🔥' },
+    { id: 'Semifinals', key:'semi', name: 'Demi-finales', emoji: '⚡' },
+    { id: 'Final', key:'final', name: 'Finale', emoji: '🏆' }
   ];
   
   const [activeFinalStage, setActiveFinalStage] = useState('Quarterfinals');
@@ -122,7 +122,7 @@ function FinalStage() {
           </h3>
         </div>
         
-        <MatchList date={new Date()} stage={activeFinalStage} />
+        <MatchList date={new Date()} stage={stages.find(s => s.id === activeFinalStage)?.key} />
       </div>
       
       <style jsx>{`

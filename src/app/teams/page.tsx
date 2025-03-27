@@ -176,7 +176,7 @@ const TeamDetail = ({ team, onBack }: { team: ITeam; onBack: () => void }) => {
           <div className="bg-gray-50 p-4 rounded-lg">
             {loading ? (
               <div className="flex justify-center py-8">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-500"></div>
+                <div className="text-4xl sm:text-5xl mb-3 sm:mb-4 spin-animation glow-effect">⚽</div>
               </div>
             ) : matches.length > 0 ? (
               <div className="divide-y divide-gray-200">
@@ -243,7 +243,7 @@ const TeamDetail = ({ team, onBack }: { team: ITeam; onBack: () => void }) => {
 // Composant d'Élément de Liste d'Équipe
 const TeamListItem = ({ team, onSelect }: { team: ITeam; onSelect: () => void }) => (
   <div 
-    className="p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+    className="p-4 hover:bg-gray-50 cursor-pointer transition-colors animate__animated animate__fadeIn animate__faster"
     onClick={onSelect}
   >
     <div className="flex justify-between items-center">
@@ -354,7 +354,7 @@ function AllTeams() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-500"></div>
+        <div className="text-4xl sm:text-5xl mb-3 sm:mb-4 spin-animation glow-effect">⚽</div>
       </div>
     );
   }
@@ -369,16 +369,20 @@ function AllTeams() {
 
   return (
     <div className="space-y-6">
-      <TournamentHeader 
-        teamsCount={teams.length} 
-        groupsCount={Object.keys(groupedTeams).length} 
-      />
+      <div className="animate__animated animate__fadeIn animate__faster">
+        <TournamentHeader 
+          teamsCount={teams.length} 
+          groupsCount={Object.keys(groupedTeams).length} 
+        />
+      </div>
 
       {selectedTeam ? (
-        <TeamDetail 
-          team={selectedTeam} 
-          onBack={() => setSelectedTeam(null)} 
-        />
+        <div className="animate__animated animate__fadeInUp animate__faster">
+          <TeamDetail 
+            team={selectedTeam} 
+            onBack={() => setSelectedTeam(null)} 
+          />
+        </div>
       ) : (
         <>
           <div className="relative">
@@ -397,10 +401,12 @@ function AllTeams() {
           </div>
 
           {Object.keys(groupedTeams).length > 0 ? (
-            <TeamsList 
-              groupedTeams={groupedTeams} 
-              onSelectTeam={setSelectedTeam} 
-            />
+            <div className="animate__animated animate__fadeInUp animate__fast">
+              <TeamsList 
+                groupedTeams={groupedTeams} 
+                onSelectTeam={setSelectedTeam} 
+              />
+            </div>
           ) : searchQuery ? (
             <div className="text-center p-6 bg-gray-50 rounded-lg">
               <p className="text-gray-500">Aucune équipe trouvée correspondant à "{searchQuery}"</p>

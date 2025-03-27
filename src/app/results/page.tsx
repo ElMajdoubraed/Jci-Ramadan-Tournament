@@ -48,10 +48,19 @@ function Results() {
     const fetchResults = async () => {
       try {
         setLoading(true);
-        const stageParam = selectedStage !== 'Toutes les Phases' ? 
-          `?stage=${encodeURIComponent(selectedStage)}` : '';
-        
-        const response = await fetch(`/api/results${stageParam}`);
+        let stageParam = '';
+        if (selectedStage === 'Phase de Groupes') {
+          stageParam = 'group';
+        } else if (selectedStage === 'Quarts de Finale') {
+          stageParam = 'quarter';
+        } else if (selectedStage === 'Demi-finales') {
+          stageParam = 'semi';
+        } else if (selectedStage === 'Finale') {
+          stageParam = 'final';
+        } else {
+          stageParam = '';
+        }
+        const response = await fetch(`/api/results?stage=${stageParam}`);
         
         if (!response.ok) {
           throw new Error('Échec de récupération des résultats');
@@ -122,7 +131,7 @@ function Results() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-500"></div>
+        <div className="text-4xl sm:text-5xl mb-3 sm:mb-4 spin-animation glow-effect">⚽</div>
       </div>
     );
   }
@@ -137,7 +146,7 @@ function Results() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-r from-emerald-700 to-emerald-600 p-4 rounded-lg shadow-md text-white">
+      <div className="bg-gradient-to-r from-emerald-700 to-emerald-600 p-4 rounded-lg shadow-md text-white animate__animated animate__fadeIn animate__faster">
         <h2 className="text-xl font-bold text-center">Résultats du Tournoi</h2>
         <p className="text-emerald-100 text-sm text-center mt-1">
           {resultsData.length} matchs terminés
@@ -145,7 +154,7 @@ function Results() {
       </div>
 
       {/* Contrôles de filtrage */}
-      <div className="bg-white shadow rounded-lg p-4">
+      <div className="bg-white shadow rounded-lg p-4 animate__animated animate__fadeInUp animate__fast">
         <div className="flex flex-wrap justify-between items-center">
           <h3 className="text-lg font-medium text-emerald-700 mb-2 md:mb-0">Filtrer les Résultats</h3>
           <div className="flex flex-wrap gap-2">
@@ -168,11 +177,11 @@ function Results() {
 
       {selectedMatch ? (
         // Vue détaillée du match
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden animate__animated animate__fadeIn animate__faster">
           <div className="bg-emerald-600 p-4 flex justify-between items-center text-white">
             <button 
               onClick={() => setSelectedMatchId(null)}
-              className="bg-opacity-20 rounded-full p-2 hover:bg-opacity-30 transition-all"
+              className="bg-white bg-opacity-20 rounded-full p-2 hover:bg-opacity-30 transition-all"
               aria-label="Retour"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -339,7 +348,7 @@ function Results() {
         </div>
       ) : (
         // Vue liste des résultats
-        <div className="bg-white rounded-lg shadow-md">
+        <div className="bg-white rounded-lg shadow-md animate__animated animate__fadeIn animate__fast">
           <div className="divide-y divide-gray-100">
             {filteredResults.length > 0 ? (
               filteredResults.map((match) => (

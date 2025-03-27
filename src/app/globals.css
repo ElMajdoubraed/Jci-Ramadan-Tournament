@@ -1,1 +1,115 @@
 @import "tailwindcss";
+
+/* Custom Animation Durations */
+.animate__animated.animate__faster {
+  --animate-duration: 0.3s;
+}
+
+.animate__animated.animate__fast {
+  --animate-duration: 0.5s;
+}
+
+.animate__animated.animate__default {
+  --animate-duration: 0.8s;
+}
+
+/* Custom Animation Delays */
+.animate__animated.animate__delay-0s {
+  animation-delay: 0s;
+}
+
+.animate__animated.animate__delay-01s {
+  animation-delay: 0.1s;
+}
+
+.animate__animated.animate__delay-02s {
+  animation-delay: 0.2s;
+}
+
+.animate__animated.animate__delay-03s {
+  animation-delay: 0.3s;
+}
+
+.animate__animated.animate__delay-05s {
+  animation-delay: 0.5s;
+}
+
+.animate__animated.animate__delay-1s {
+  animation-delay: 0.8s;
+}
+
+.animate__animated.animate__delay-2s {
+  animation-delay: 1.2s;
+}
+
+.animate__animated.animate__delay-3s {
+  animation-delay: 1.5s;
+}
+
+.animate__animated.animate__delay-4s {
+  animation-delay: 1.7s;
+}
+
+/* Reduce animation intensity for better performance */
+.animate__animated.animate__pulse.animate__infinite {
+  --animate-duration: 2s;
+}
+
+/* Ensure animations end correctly */
+.animate__animated {
+  animation-fill-mode: both;
+}
+
+/* Page transition effect */
+@keyframes fadeInContent {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-transition-enter {
+  animation: fadeInContent 0.3s ease forwards;
+}
+
+/* Custom glowing effect */
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+  }
+}
+
+.glow-effect {
+  animation: glow 2s infinite;
+}
+
+/* Logo bounce animation */
+@keyframes floatAnimation {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.float-animation {
+  animation: floatAnimation 3s ease-in-out infinite;
+}
+
+.spin-animation {
+  animation: spin 2s linear infinite;
+}

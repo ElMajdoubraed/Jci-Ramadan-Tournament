@@ -251,7 +251,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
 
   return (
     <>
-      <div className="overflow-hidden rounded-xl border border-indigo-100 bg-white shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-indigo-50">
+      <div className="overflow-hidden rounded-xl border border-indigo-100 bg-white shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-indigo-50 animate__animated animate__fadeIn animate__faster">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">

@@ -74,7 +74,7 @@ function MatchDetail() {
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8 flex justify-center items-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
+        <div className="text-4xl sm:text-5xl mb-3 sm:mb-4 spin-animation glow-effect">⚽</div>
       </div>
     );
   }
@@ -114,9 +114,6 @@ function MatchDetail() {
       return (
         <span className="ml-2 text-xs text-yellow-600 font-medium flex items-center">
           <span className="mr-1">Triplé</span>
-          <span className="flex">
-            {"⚽".repeat(3)}
-          </span>
         </span>
       );
     }

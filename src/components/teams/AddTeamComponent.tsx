@@ -61,11 +61,11 @@ export default function AddTeamComponent({ onTeamAdded }: AddTeamProps) {
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
             </svg>
-            Ajouter Nouvelle Équipe
+            <span>Ajouter Nouvelle Équipe</span>
           </span>
         </button>
       ) : (
-        <div className="rounded-xl border-2 border-indigo-100 bg-white p-6 shadow-2xl transition-all duration-300 hover:shadow-indigo-100">
+        <div className="rounded-xl border-2 border-indigo-100 bg-white p-6 shadow-2xl transition-all duration-300 hover:shadow-indigo-100 animate__animated animate__fadeIn animate__faster">
           <h3 className="mb-6 text-2xl font-bold text-gradient bg-gradient-to-r from-indigo-600 to-purple-600 inline-block text-transparent bg-clip-text">Inscrire Nouvelle Équipe</h3>
           
           <form onSubmit={handleSubmit} className="space-y-6">
