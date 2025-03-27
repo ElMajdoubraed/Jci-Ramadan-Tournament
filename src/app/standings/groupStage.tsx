@@ -14,14 +14,14 @@ function GroupStage() {
         const response = await fetch('/api/teams');
         
         if (!response.ok) {
-          throw new Error('Failed to fetch teams');
+          throw new Error('Échec de récupération des équipes');
         }
         
         const teamsData = await response.json();
         setTeams(teamsData);
       } catch (err) {
-        console.error('Error fetching teams:', err);
-        setError('Failed to load teams. Please try again later.');
+        console.error('Erreur lors de la récupération des équipes:', err);
+        setError('Impossible de charger les équipes. Veuillez réessayer plus tard.');
       } finally {
         setLoading(false);
       }
@@ -30,7 +30,7 @@ function GroupStage() {
     fetchTeams();
   }, []);
 
-  // Group teams by their group
+  // Regrouper les équipes par leur groupe
   const groupedTeams: Record<string, ITeam[]> = teams.reduce((acc: Record<string, ITeam[]>, team: ITeam) => {
     if (!acc[team.group]) {
       acc[team.group] = [];
@@ -39,17 +39,17 @@ function GroupStage() {
     return acc;
   }, {});
 
-  // Sort grouped teams by points
+  // Trier les groupes d'équipes par points
   const sortedGroups = Object.entries(groupedTeams).map(([groupName, groupTeams]) => {
     return {
       name: `Groupe ${groupName}`,
       teams: [...groupTeams].sort((a, b) => {
-        // First sort by points
+        // D'abord trier par points
         if (a.groupStageDetails.points !== b.groupStageDetails.points) {
           return b.groupStageDetails.points - a.groupStageDetails.points;
         }
         
-        // Then by goal difference
+        // Puis par différence de buts
         const aGoalDiff = a.groupStageDetails.goalsFor - a.groupStageDetails.goalsAgainst;
         const bGoalDiff = b.groupStageDetails.goalsFor - b.groupStageDetails.goalsAgainst;
         
@@ -57,16 +57,16 @@ function GroupStage() {
           return bGoalDiff - aGoalDiff;
         }
         
-        // Finally by goals scored
+        // Enfin par buts marqués
         return b.groupStageDetails.goalsFor - a.groupStageDetails.goalsFor;
       })
     };
-  }).sort((a, b) => a.name.localeCompare(b.name)); // Sort groups alphabetically
+  }).sort((a, b) => a.name.localeCompare(b.name)); // Trier les groupes par ordre alphabétique
 
-  // Calculate qualifying positions (top 2 teams qualify)
+  // Calculer les positions qualificatives (les 2 meilleures équipes se qualifient)
   const getPositionClass = (index: number) => {
-    if (index < 2) return "border-l-4 border-emerald-500"; // Qualifying positions
-    return ""; // Non-qualifying positions
+    if (index < 2) return "border-l-4 border-emerald-500"; // Positions qualificatives
+    return ""; // Positions non qualificatives
   };
 
   if (loading) {
@@ -93,7 +93,7 @@ function GroupStage() {
             <h3 className="text-base sm:text-lg md:text-xl font-bold text-white text-center sm:text-left">{group.name}</h3>
           </div>
           
-          {/* Desktop Table header - hidden on very small screens */}
+          {/* En-tête de tableau pour ordinateur - caché sur les très petits écrans */}
           <div className="hidden xs:grid px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 bg-emerald-50 text-2xs xs:text-xs text-emerald-800 font-medium grid-cols-12 gap-1">
             <div className="col-span-4">Équipe</div>
             <div className="col-span-1 text-center">J</div>
@@ -106,7 +106,7 @@ function GroupStage() {
             <div className="col-span-1 text-center font-bold">Pts</div>
           </div>
           
-          {/* Mobile view - compact table with only essential info */}
+          {/* Vue mobile - tableau compact avec uniquement les infos essentielles */}
           <div className="xs:hidden px-2 py-1.5 bg-emerald-50 text-2xs font-medium grid grid-cols-8 gap-1">
             <div className="col-span-4">Équipe</div>
             <div className="col-span-1 text-center">J</div>
@@ -114,7 +114,7 @@ function GroupStage() {
             <div className="col-span-2 text-center font-bold">Pts</div>
           </div>
           
-          {/* Team rows - Desktop view */}
+          {/* Lignes d'équipes - Vue ordinateur */}
           <div className="divide-y divide-gray-100">
             {group.teams.map((team, index) => {
               const details = team.groupStageDetails;
@@ -123,14 +123,14 @@ function GroupStage() {
               
               return (
                 <div key={`${team.name}-${index}`}>
-                  {/* Desktop view */}
+                  {/* Vue ordinateur */}
                   <div 
                     className={`hidden xs:grid px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-3 grid-cols-12 gap-1 items-center hover:bg-gray-50 ${getPositionClass(index)}`}
                   >
                     <div className="col-span-4 font-medium flex items-center">
                       <span className="inline-block w-4 sm:w-5 text-center mr-1 sm:mr-2 text-2xs xs:text-xs text-gray-500">{index + 1}</span>
                       <span className={`truncate ${isQualifying ? "text-emerald-700" : ""}`}>{team.name}</span>
-                      {index === 0 && <span className="ml-1 sm:ml-2 text-2xs xs:text-xs bg-emerald-100 text-emerald-800 px-1 rounded">Meneur</span>}
+                      {index === 0 && <span className="hidden sm:block ml-1 sm:ml-2 text-2xs xs:text-xs bg-emerald-100 text-emerald-800 px-1 rounded">Meneur</span>}
                     </div>
                     <div className="col-span-1 text-center text-2xs xs:text-xs">{details.playedMatches}</div>
                     <div className="col-span-1 text-center text-2xs xs:text-xs">{details.wins}</div>
@@ -149,7 +149,7 @@ function GroupStage() {
                     <div className="col-span-1 text-center font-bold text-2xs xs:text-xs">{details.points}</div>
                   </div>
                   
-                  {/* Mobile view - compact */}
+                  {/* Vue mobile - compact */}
                   <div 
                     className={`xs:hidden px-2 py-1.5 grid grid-cols-8 gap-1 items-center hover:bg-gray-50 ${getPositionClass(index)}`}
                   >
@@ -173,7 +173,7 @@ function GroupStage() {
             })}
           </div>
           
-          {/* Legend */}
+          {/* Légende */}
           <div className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-gray-50 text-2xs xs:text-xs text-gray-500 border-t border-gray-100">
             <div className="flex items-center">
               <span className="inline-block w-2 sm:w-3 h-2 sm:h-3 bg-emerald-500 mr-1"></span>
@@ -183,7 +183,7 @@ function GroupStage() {
         </div>
       ))}
       
-      {/* Legend for abbreviations */}
+      {/* Légende des abréviations */}
       <div className="sm:col-span-2 bg-white p-2 md:p-3 rounded-lg shadow text-2xs xs:text-xs sm:text-sm text-gray-600 flex flex-wrap gap-x-2 sm:gap-x-3 md:gap-x-6 gap-y-1 sm:gap-y-2 justify-center sm:justify-start">
         <span><strong>J</strong>: Joués</span>
         <span><strong>G</strong>: Gagnés</span>
@@ -198,7 +198,7 @@ function GroupStage() {
   );
 }
 
-// Add a custom breakpoint for extra small devices
+// Ajouter un point de rupture personnalisé pour les appareils très petits
 const styles = `
   @media (min-width: 480px) {
     .xs\\:grid {

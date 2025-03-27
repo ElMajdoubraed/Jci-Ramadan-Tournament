@@ -20,7 +20,7 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
 
   const closeModal = () => {
     setShowConfirmation(false);
-    // If we were successful, also reset the component state
+    // Si nous avons réussi, réinitialiser également l'état du composant
     if (status === 'success') {
       setStatus('idle');
       setProgress(0);
@@ -29,17 +29,17 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
   };
 
   const simulateProgress = () => {
-    // Simulate progress that never reaches 100% until we get a response
-    setProgress(5); // Start at 5%
+    // Simuler une progression qui n'atteint jamais 100% jusqu'à ce que nous obtenions une réponse
+    setProgress(5); // Commencer à 5%
     
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 90) {
-          // Stay at 90% until operation actually completes
+          // Rester à 90% jusqu'à ce que l'opération soit terminée
           clearInterval(interval);
           return 90;
         }
-        return prev + Math.random() * 10; // Random increment to simulate variable progress
+        return prev + Math.random() * 10; // Incrément aléatoire pour simuler une progression variable
       });
     }, 300);
 
@@ -52,7 +52,7 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
     setError(null);
     setResults(null);
     
-    // Start simulating progress
+    // Commencer à simuler la progression
     const progressInterval = simulateProgress();
     
     try {
@@ -63,26 +63,26 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
         }
       });
       
-      clearInterval(progressInterval); // Stop the progress simulation
+      clearInterval(progressInterval); // Arrêter la simulation de progression
       
       if (response.ok) {
         const data = await response.json();
         setProgress(100);
         setStatus('success');
         setResults(data);
-        onComplete(); // Refresh parent data
+        onComplete(); // Actualiser les données parentes
       } else {
         const errorData = await response.json();
         setProgress(0);
         setStatus('error');
-        setError(errorData.message || 'Failed to reset team stats');
+        setError(errorData.message || 'Échec de réinitialisation des statistiques');
       }
     } catch (error) {
-      clearInterval(progressInterval); // Stop the progress simulation
-      console.error('Error resetting team stats:', error);
+      clearInterval(progressInterval); // Arrêter la simulation de progression
+      console.error('Erreur lors de la réinitialisation des statistiques:', error);
       setProgress(0);
       setStatus('error');
-      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
+      setError(error instanceof Error ? error.message : 'Une erreur inattendue est survenue');
     } finally {
       setIsResetting(false);
     }
@@ -100,9 +100,9 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
                 </svg>
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Reset Team Statistics</h2>
+                <h2 className="text-lg font-semibold text-gray-900">Réinitialiser les Statistiques</h2>
                 <p className="mt-1 text-sm text-gray-500">
-                  This will reset all team statistics and recalculate them based on match results.
+                  Ceci réinitialisera toutes les statistiques des équipes et les recalculera en fonction des résultats des matchs.
                 </p>
               </div>
             </div>
@@ -117,14 +117,14 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Processing...
+                  Traitement...
                 </>
               ) : (
                 <>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
                   </svg>
-                  Reset Stats
+                  Réinitialiser
                 </>
               )}
             </button>
@@ -132,18 +132,18 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
         </div>
       </div>
 
-      {/* Confirmation Modal */}
+      {/* Modal de Confirmation */}
       {showConfirmation && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            {/* Background overlay */}
+            {/* Arrière-plan superposé */}
             <div 
               className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
               onClick={status !== 'processing' ? closeModal : undefined}
               aria-hidden="true"
             ></div>
 
-            {/* Modal panel */}
+            {/* Panneau modal */}
             <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
               <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div className="sm:flex sm:items-start">
@@ -156,20 +156,20 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
                       </div>
                       <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                         <h3 className="text-lg font-medium leading-6 text-gray-900">
-                          Reset All Team Statistics
+                          Réinitialiser Toutes les Statistiques
                         </h3>
                         <div className="mt-2">
                           <p className="text-sm text-gray-500">
-                            Are you sure you want to reset all team statistics? This action will:
+                            Êtes-vous sûr de vouloir réinitialiser toutes les statistiques des équipes ? Cette action va :
                           </p>
                           <ul className="mt-2 list-disc pl-5 text-sm text-gray-500">
-                            <li>Reset all team win/loss/draw records</li>
-                            <li>Reset all team goal statistics</li>
-                            <li>Reset group stage points and standings</li>
-                            <li>Recalculate all statistics based on completed matches</li>
+                            <li>Réinitialiser tous les records de victoires/défaites/nuls</li>
+                            <li>Réinitialiser toutes les statistiques de buts</li>
+                            <li>Réinitialiser les points et classements de la phase de groupes</li>
+                            <li>Recalculer toutes les statistiques en fonction des matchs terminés</li>
                           </ul>
                           <p className="mt-2 text-sm font-semibold text-red-600">
-                            This operation may take some time to complete. Do not navigate away from this page during processing.
+                            Cette opération peut prendre du temps. Ne quittez pas cette page pendant le traitement.
                           </p>
                         </div>
                       </div>
@@ -180,7 +180,7 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
                     <div className="w-full px-4 py-4">
                       <div className="text-center">
                         <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">
-                          Processing Team Statistics Reset
+                          Réinitialisation des Statistiques en Cours
                         </h3>
                         <div className="flex justify-center mb-4">
                           <svg className="animate-spin h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -189,8 +189,8 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
                           </svg>
                         </div>
                         <p className="text-sm text-gray-500 mb-4">
-                          Resetting team statistics and recalculating based on match history.
-                          Please wait, this may take a moment...
+                          Réinitialisation des statistiques et recalcul basé sur l'historique des matchs.
+                          Veuillez patienter, cela peut prendre un moment...
                         </p>
                         <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
                           <div 
@@ -199,7 +199,7 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
                           ></div>
                         </div>
                         <p className="text-xs text-gray-500">
-                          {progress.toFixed(0)}% Complete
+                          {progress.toFixed(0)}% Terminé
                         </p>
                       </div>
                     </div>
@@ -216,19 +216,19 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
                           </div>
                         </div>
                         <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2">
-                          Statistics Reset Complete
+                          Réinitialisation Terminée
                         </h3>
                         <p className="text-sm text-gray-500 mb-4">
-                          All team statistics have been successfully reset and recalculated.
+                          Toutes les statistiques des équipes ont été réinitialisées et recalculées avec succès.
                         </p>
                         <div className="mb-4 max-h-40 overflow-y-auto rounded-md bg-gray-50 p-3 text-left">
-                          <p className="text-xs text-gray-500 mb-2">Operation summary:</p>
+                          <p className="text-xs text-gray-500 mb-2">Résumé de l'opération :</p>
                           <p className="text-xs font-medium text-gray-700">
-                            {results?.results?.filter((r: any) => r.status === 'success').length || 0} teams processed successfully
+                            {results?.results?.filter((r: any) => r.status === 'success').length || 0} équipes traitées avec succès
                           </p>
                           {results?.results?.some((r: any) => r.status === 'error') && (
                             <p className="text-xs font-medium text-red-700">
-                              {results?.results?.filter((r: any) => r.status === 'error').length || 0} teams encountered errors
+                              {results?.results?.filter((r: any) => r.status === 'error').length || 0} équipes ont rencontré des erreurs
                             </p>
                           )}
                         </div>
@@ -247,10 +247,10 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
                           </div>
                         </div>
                         <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2">
-                          Reset Operation Failed
+                          Échec de l'Opération de Réinitialisation
                         </h3>
                         <p className="text-sm text-gray-500 mb-4">
-                          An error occurred while resetting team statistics.
+                          Une erreur s'est produite lors de la réinitialisation des statistiques.
                         </p>
                         {error && (
                           <div className="mb-4 rounded-md bg-red-50 p-3 text-left">
@@ -270,14 +270,14 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
                       onClick={handleResetStats}
                       className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 sm:ml-3 sm:w-auto"
                     >
-                      Reset Stats
+                      Réinitialiser
                     </button>
                     <button
                       type="button"
                       onClick={closeModal}
                       className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                     >
-                      Cancel
+                      Annuler
                     </button>
                   </>
                 )}
@@ -288,7 +288,7 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
                     disabled
                     className="inline-flex w-full justify-center rounded-md bg-gray-300 px-3 py-2 text-sm font-semibold text-gray-500 shadow-sm sm:ml-3 sm:w-auto cursor-not-allowed"
                   >
-                    Processing...
+                    Traitement en cours...
                   </button>
                 )}
 
@@ -298,7 +298,7 @@ export default function ResetStatsComponent({ onComplete }: ResetStatsProps) {
                     onClick={closeModal}
                     className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 sm:ml-3 sm:w-auto"
                   >
-                    {status === 'success' ? 'Done' : 'Close'}
+                    {status === 'success' ? 'Terminé' : 'Fermer'}
                   </button>
                 )}
               </div>

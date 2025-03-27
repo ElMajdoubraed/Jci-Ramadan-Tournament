@@ -69,11 +69,11 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
       if (response.ok) {
         onRefresh();
       } else {
-        alert('Failed to start match');
+        alert('Impossible de démarrer le match');
       }
     } catch (error) {
-      console.error('Error starting match:', error);
-      alert('Error starting match');
+      console.error('Erreur de démarrage du match:', error);
+      alert('Erreur de démarrage du match');
     } finally {
       setIsUpdating(false);
     }
@@ -224,13 +224,13 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
   const formatMatchPhase = (phase: MatchPhase): string => {
     switch (phase) {
       case MatchPhase.GROUP:
-        return 'Group Stage';
+        return 'Phase de Groupes';
       case MatchPhase.QUARTER:
-        return 'Quarter Finals';
+        return 'Quarts de Finale';
       case MatchPhase.SEMI:
-        return 'Semi Finals';
+        return 'Demi-finales';
       case MatchPhase.FINAL:
-        return 'Final';
+        return 'Finale';
       default:
         return phase;
     }
@@ -257,16 +257,16 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
             <thead className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
               <tr>
                 <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
-                  Date & Time
+                  Date & Heure
                 </th>
                 <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
-                  Teams
+                  Équipes
                 </th>
                 <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
                   Score
                 </th>
                 <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
-                  Status
+                  Statut
                 </th>
                 <th scope="col" className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">
                   Phase
@@ -291,13 +291,13 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                   <td className="whitespace-nowrap px-6 py-4">
                     <div className="flex items-center">
                       <div className="flex flex-col items-end mr-2">
-                        <span className="text-sm font-bold text-indigo-700">{(match.teamA as ITeam)?.name || 'Team A'}</span>
+                        <span className="text-sm font-bold text-indigo-700">{(match.teamA as ITeam)?.name || 'Équipe A'}</span>
                       </div>
                       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-800">
                         VS
                       </div>
                       <div className="flex flex-col items-start ml-2">
-                        <span className="text-sm font-bold text-purple-700">{(match.teamB as ITeam)?.name || 'Team B'}</span>
+                        <span className="text-sm font-bold text-purple-700">{(match.teamB as ITeam)?.name || 'Équipe B'}</span>
                       </div>
                     </div>
                   </td>
@@ -336,7 +336,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                           </svg>
-                          Start
+                          Commencer
                         </button>
                       )}
                       
@@ -351,7 +351,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                             <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                           )}
                         </svg>
-                        {match.status !== MatchStatus.FINISHED ? 'End' : 'Update Score'}
+                        {match.status !== MatchStatus.FINISHED ? 'Terminer' : 'Modifier Score'}
                       </button>
                       
                       {/* Update button - available for all matches */}
@@ -362,7 +362,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                           <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                         </svg>
-                        Update
+                        Modifier
                       </button>
                       
                       {/* Delete button - available for all matches */}
@@ -373,7 +373,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
                         </svg>
-                        Delete
+                        Supprimer
                       </button>
                     </div>
                   </td>
@@ -386,8 +386,8 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-indigo-200 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      <p className="text-gray-500 text-lg font-medium">No matches scheduled yet</p>
-                      <p className="text-gray-400 text-sm mt-1">Add your first match to get started</p>
+                      <p className="text-gray-500 text-lg font-medium">Aucun match programmé</p>
+                      <p className="text-gray-400 text-sm mt-1">Ajoutez votre premier match pour commencer</p>
                     </div>
                   </td>
                 </tr>
@@ -414,7 +414,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                     <h3 className="text-lg font-medium leading-6 text-gray-900">
-                      {selectedMatch.status === MatchStatus.FINISHED ? 'Update Score' : 'End Match'}: {(selectedMatch.teamA as ITeam)?.name} vs {(selectedMatch.teamB as ITeam)?.name}
+                      {selectedMatch.status === MatchStatus.FINISHED ? 'Modifier Score' : 'Terminer Match'}: {(selectedMatch.teamA as ITeam)?.name} vs {(selectedMatch.teamB as ITeam)?.name}
                     </h3>
                     <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Team A */}
@@ -425,7 +425,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                         
                         <div className="mb-4">
                           <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Final Score
+                            Score Final
                           </label>
                           <input
                             type="number"
@@ -438,14 +438,14 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                         
                         <div className="mb-4">
                           <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Goal Scorers
+                            Buteurs
                           </label>
                           <div className="flex space-x-2">
                             <input
                               type="text"
                               value={newTeamAScorer}
                               onChange={(e) => setNewTeamAScorer(e.target.value)}
-                              placeholder="Player name"
+                              placeholder="Nom du joueur"
                               className="flex-1 rounded-md border border-indigo-300 p-2 text-indigo-700 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                             />
                           </div>
@@ -454,7 +454,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                               onClick={addTeamAScorer}
                               className="inline-flex w-full items-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 transition-all duration-200"
                             >
-                              Add
+                              Ajouter
                             </button>
                           </div>
                         </div>
@@ -480,7 +480,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                               ))}
                             </ul>
                           ) : (
-                            <p className="text-center text-gray-500 py-2">No scorers added</p>
+                            <p className="text-center text-gray-500 py-2">Aucun buteur ajouté</p>
                           )}
                         </div>
                       </div>
@@ -493,7 +493,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                         
                         <div className="mb-4">
                           <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Final Score
+                            Score Final
                           </label>
                           <input
                             type="number"
@@ -506,20 +506,20 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                         
                         <div className="mb-4">
                           <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Goal Scorers
+                            Buteurs
                           </label>
                           <div className="flex space-x-2">
                             <input
                               type="text"
                               value={newTeamBScorer}
                               onChange={(e) => setNewTeamBScorer(e.target.value)}
-                              placeholder="Player name"
+                              placeholder="Nom du joueur"
                               className="flex-1 rounded-md border border-purple-300 p-2 text-purple-700 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50"
                             />
                           </div>
                           <div>
                             <button onClick={addTeamBScorer} className="inline-flex items-center w-full rounded-md bg-purple-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 transition-all duration-200">
-                            Add</button>
+                            Ajouter</button>
                           </div>
                         </div>
                         
@@ -544,7 +544,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                               ))}
                             </ul>
                           ) : (
-                            <p className="text-center text-gray-500 py-2">No scorers added</p>
+                            <p className="text-center text-gray-500 py-2">Aucun buteur ajouté</p>
                           )}
                         </div>
                       </div>
@@ -559,7 +559,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                   disabled={isUpdating}
                   className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                 >
-                  {isUpdating ? 'Saving...' : (selectedMatch?.status === MatchStatus.LIVE ? 'End Match' : 'Update Score')}
+                  {isUpdating ? 'Enregistrement...' : (selectedMatch?.status === MatchStatus.LIVE ? 'Terminer Match' : 'Modifier Score')}
                 </button>
                 <button
                   type="button"
@@ -567,7 +567,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                   disabled={isUpdating}
                   className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                 >
-                  Cancel
+                  Annuler
                 </button>
               </div>
             </div>
@@ -592,12 +592,12 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                     <h3 className="text-lg font-medium leading-6 text-gray-900">
-                      Update Match: {(selectedMatch.teamA as ITeam)?.name} vs {(selectedMatch.teamB as ITeam)?.name}
+                      Modifier Match: {(selectedMatch.teamA as ITeam)?.name} vs {(selectedMatch.teamB as ITeam)?.name}
                     </h3>
                     <div className="mt-6 space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Match Date
+                          Date du Match
                         </label>
                         <input
                           type="date"
@@ -609,7 +609,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                       
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Match Time
+                          Heure du Match
                         </label>
                         <input
                           type="time"
@@ -629,7 +629,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                   disabled={isUpdating}
                   className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
                 >
-                  {isUpdating ? 'Saving...' : 'Update Match'}
+                  {isUpdating ? 'Enregistrement...' : 'Modifier Match'}
                 </button>
                 <button
                   type="button"
@@ -637,7 +637,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                   disabled={isUpdating}
                   className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                 >
-                  Cancel
+                  Annuler
                 </button>
               </div>
             </div>
@@ -667,11 +667,11 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                     <h3 className="text-lg font-medium leading-6 text-gray-900">
-                      Delete Match
+                      Supprimer Match
                     </h3>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        Are you sure you want to delete the match between {(selectedMatch.teamA as ITeam)?.name} and {(selectedMatch.teamB as ITeam)?.name}? This action cannot be undone.
+                        Êtes-vous sûr de vouloir supprimer le match entre {(selectedMatch.teamA as ITeam)?.name} et {(selectedMatch.teamB as ITeam)?.name} ? Cette action est irréversible.
                       </p>
                     </div>
                   </div>
@@ -684,7 +684,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                   disabled={isUpdating}
                   className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                 >
-                  {isUpdating ? 'Deleting...' : 'Delete'}
+                  {isUpdating ? 'Suppression...' : 'Supprimer'}
                 </button>
                 <button
                   type="button"
@@ -692,7 +692,7 @@ export default function MatchListComponent({ matches, onRefresh }: MatchListProp
                   disabled={isUpdating}
                   className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                 >
-                  Cancel
+                  Annuler
                 </button>
               </div>
             </div>

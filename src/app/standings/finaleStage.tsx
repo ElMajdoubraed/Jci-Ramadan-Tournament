@@ -12,14 +12,14 @@ function FinalStage() {
   
   const [activeFinalStage, setActiveFinalStage] = useState('Quarterfinals');
   
-  // Function to determine if a stage is completed
+  // Fonction pour déterminer si une phase est terminée
   const isStageCompleted = (stageId: string) => {
     const stageOrder = stages.findIndex(s => s.id === stageId);
     const activeStageOrder = stages.findIndex(s => s.id === activeFinalStage);
     return stageOrder < activeStageOrder;
   };
   
-  // Function to determine if a stage is next (for visual indication)
+  // Fonction pour déterminer si une phase est la suivante (pour indication visuelle)
   const isStageNext = (stageId: string) => {
     const stageOrder = stages.findIndex(s => s.id === stageId);
     const activeStageOrder = stages.findIndex(s => s.id === activeFinalStage);
@@ -33,7 +33,7 @@ function FinalStage() {
         <p className="text-emerald-100 text-2xs sm:text-xs md:text-sm text-center mb-3 sm:mb-4">Suivez le parcours vers le championnat</p>
         
         <div className="relative px-1 sm:px-2 pb-2 mt-4 sm:mt-5">
-          {/* Progress bar */}
+          {/* Barre de progression */}
           <div className="absolute top-full sm:top-1/2 left-0 h-0.5 sm:h-1 bg-emerald-300 bg-opacity-30 w-full -translate-y-1/2 rounded-full"></div>
           <div 
             className="absolute top-full sm:top-1/2 left-0 h-0.5 sm:h-1 bg-white -translate-y-1/2 rounded-full transition-all duration-500"
@@ -42,7 +42,7 @@ function FinalStage() {
             }}
           ></div>
           
-          {/* Stage buttons - mobile scrollable version */}
+          {/* Boutons des phases - version mobile défilable */}
           <div className="flex justify-between relative z-10 sm:hidden overflow-x-auto pb-2 sm:pb-3 gap-1 sm:gap-2 hide-scrollbar">
             {stages.map((stage, index) => {
               const isActive = activeFinalStage === stage.id;
@@ -68,16 +68,16 @@ function FinalStage() {
                     {stage.name}
                   </span>
                   <span className="text-2xs text-emerald-200 mt-0.5 text-center">
-                    {index === 0 ? '16 Équipes' : 
-                     index === 1 ? '8 Équipes' : 
-                     index === 2 ? '4 Équipes' : '2 Équipes'}
+                    {index === 0 ? '8 Équipes' : 
+                     index === 1 ? '4 Équipes' : 
+                     index === 2 ? '2 Équipes' : '1 Équipe'}
                   </span>
                 </div>
               );
             })}
           </div>
           
-          {/* Stage buttons - tablet/desktop version */}
+          {/* Boutons des phases - version tablette/bureau */}
           <div className="hidden sm:flex justify-between relative z-10">
             {stages.map((stage, index) => {
               const isActive = activeFinalStage === stage.id;
@@ -103,9 +103,9 @@ function FinalStage() {
                     {stage.name}
                   </span>
                   <span className="text-2xs sm:text-xs text-emerald-200 mt-0.5 md:mt-1">
-                    {index === 0 ? '16 Équipes' : 
-                     index === 1 ? '8 Équipes' : 
-                     index === 2 ? '4 Équipes' : '2 Équipes'}
+                    {index === 0 ? '8 Équipes' : 
+                     index === 1 ? '4 Équipes' : 
+                     index === 2 ? '2 Équipes' : '1 Équipe'}
                   </span>
                 </div>
               );

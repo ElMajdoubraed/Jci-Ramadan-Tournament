@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { MatchPhase } from '@/models/Match';
 
-// Define TypeScript interfaces
+// Définir les interfaces TypeScript
 interface MatchGoal {
   player: string;
   team: string;
@@ -33,36 +33,36 @@ interface MatchResult {
 }
 
 function Results() {
-  // State
+  // État
   const [resultsData, setResultsData] = useState<MatchResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedStage, setSelectedStage] = useState<string>('All Stages');
+  const [selectedStage, setSelectedStage] = useState<string>('Toutes les Phases');
   const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
 
-  // Get available stages from the Match model
-  const stages = ['All Stages', 'Group Stage', 'Round of 16', 'Quarter Finals', 'Semi Finals', 'Final'];
+  // Obtenir les phases disponibles depuis le modèle Match
+  const stages = ['Toutes les Phases', 'Phase de Groupes', 'Quarts de Finale', 'Demi-finales', 'Finale'];
 
-  // Fetch results data
+  // Récupérer les données des résultats
   useEffect(() => {
     const fetchResults = async () => {
       try {
         setLoading(true);
-        const stageParam = selectedStage !== 'All Stages' ? 
+        const stageParam = selectedStage !== 'Toutes les Phases' ? 
           `?stage=${encodeURIComponent(selectedStage)}` : '';
         
         const response = await fetch(`/api/results${stageParam}`);
         
         if (!response.ok) {
-          throw new Error('Failed to fetch results');
+          throw new Error('Échec de récupération des résultats');
         }
         
         const data = await response.json();
         setResultsData(data);
         setError(null);
       } catch (err: any) {
-        console.error('Error fetching results:', err);
-        setError(err.message || 'Failed to load results');
+        console.error('Erreur lors de la récupération des résultats:', err);
+        setError(err.message || 'Impossible de charger les résultats');
       } finally {
         setLoading(false);
       }
@@ -71,51 +71,50 @@ function Results() {
     fetchResults();
   }, [selectedStage]);
 
-  // Filter results based on selected stage
+  // Filtrer les résultats en fonction de la phase sélectionnée
   const filteredResults = resultsData;
 
-  // Format date for display
+  // Formater la date pour l'affichage
   const formatMatchDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
+    return date.toLocaleDateString('fr-FR', { 
       weekday: 'short', 
       month: 'short', 
       day: 'numeric' 
     });
   };
 
-  // Format time for display
+  // Formater l'heure pour l'affichage
   const formatMatchTime = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', { 
+    return date.toLocaleTimeString('fr-FR', { 
       hour: '2-digit', 
-      minute: '2-digit',
-      hour12: true 
+      minute: '2-digit'
     });
   };
 
-  // Determine match outcome for a team
+  // Déterminer le résultat du match pour une équipe
   const getMatchOutcome = (match: MatchResult, team: string): string => {
     const isTeamA = match.teamA === team;
     const teamScore = isTeamA ? match.scoreA : match.scoreB;
     const opponentScore = isTeamA ? match.scoreB : match.scoreA;
     
-    if (teamScore > opponentScore) return 'W';
-    if (teamScore < opponentScore) return 'L';
-    return 'D';
+    if (teamScore > opponentScore) return 'V';
+    if (teamScore < opponentScore) return 'D';
+    return 'N';
   };
 
-  // Get appropriate color class for match outcome
+  // Obtenir la classe de couleur appropriée pour le résultat du match
   const getOutcomeColorClass = (outcome: string): string => {
     switch (outcome) {
-      case 'W': return 'bg-emerald-100 text-emerald-800';
-      case 'L': return 'bg-red-100 text-red-800';
-      case 'D': return 'bg-blue-100 text-blue-800';
+      case 'V': return 'bg-emerald-100 text-emerald-800';
+      case 'D': return 'bg-red-100 text-red-800';
+      case 'N': return 'bg-blue-100 text-blue-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
 
-  // Find selected match
+  // Trouver le match sélectionné
   const selectedMatch = selectedMatchId 
     ? resultsData.find(match => match.id === selectedMatchId) 
     : null;
@@ -139,16 +138,16 @@ function Results() {
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-emerald-700 to-emerald-600 p-4 rounded-lg shadow-md text-white">
-        <h2 className="text-xl font-bold text-center">Tournament Results</h2>
+        <h2 className="text-xl font-bold text-center">Résultats du Tournoi</h2>
         <p className="text-emerald-100 text-sm text-center mt-1">
-          {resultsData.length} completed matches
+          {resultsData.length} matchs terminés
         </p>
       </div>
 
-      {/* Filter controls */}
+      {/* Contrôles de filtrage */}
       <div className="bg-white shadow rounded-lg p-4">
         <div className="flex flex-wrap justify-between items-center">
-          <h3 className="text-lg font-medium text-emerald-700 mb-2 md:mb-0">Filter Results</h3>
+          <h3 className="text-lg font-medium text-emerald-700 mb-2 md:mb-0">Filtrer les Résultats</h3>
           <div className="flex flex-wrap gap-2">
             {stages.map(stage => (
               <button
@@ -168,25 +167,25 @@ function Results() {
       </div>
 
       {selectedMatch ? (
-        // Match detail view
+        // Vue détaillée du match
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="bg-emerald-600 p-4 flex justify-between items-center text-white">
             <button 
               onClick={() => setSelectedMatchId(null)}
-              className="bg-white bg-opacity-20 rounded-full p-2 hover:bg-opacity-30 transition-all"
-              aria-label="Go back"
+              className="bg-opacity-20 rounded-full p-2 hover:bg-opacity-30 transition-all"
+              aria-label="Retour"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
               </svg>
             </button>
-            <h3 className="text-lg font-bold">Match Details</h3>
+            <h3 className="text-lg font-bold">Détails du Match</h3>
             <div className="bg-white text-emerald-800 px-2 py-1 rounded-full text-xs font-medium">
-              {selectedMatch.stage} {selectedMatch.group ? `• Group ${selectedMatch.group}` : ''}
+              {selectedMatch.stage} {selectedMatch.group ? `• Groupe ${selectedMatch.group}` : ''}
             </div>
           </div>
           
-          {/* Match overview */}
+          {/* Aperçu du match */}
           <div className="p-4 bg-gradient-to-b from-gray-50 to-white">
             <div className="text-center text-sm text-gray-500 mb-3">
               {formatMatchDate(selectedMatch.date)} • {formatMatchTime(selectedMatch.date)} • {selectedMatch.location}
@@ -220,10 +219,10 @@ function Results() {
               </div>
             </div>
             
-            {/* Match stats */}
+            {/* Statistiques du match */}
             {/* {selectedMatch.stats && (
               <div className="mt-6">
-                <h4 className="text-base font-medium text-gray-700 mb-3 border-b pb-2">Match Statistics</h4>
+                <h4 className="text-base font-medium text-gray-700 mb-3 border-b pb-2">Statistiques du Match</h4>
                 <div className="space-y-3">
                   <div className="flex items-center">
                     <div className="w-16 text-right text-sm font-medium">{selectedMatch.stats.possession[0]}%</div>
@@ -242,7 +241,7 @@ function Results() {
                     <div className="flex-1 mx-3 h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${(selectedMatch.stats.shots[0] / (selectedMatch.stats.shots[0] + selectedMatch.stats.shots[1])) * 100}%` }}></div>
                     </div>
-                    <div className="w-20 text-sm">Shots</div>
+                    <div className="w-20 text-sm">Tirs</div>
                     <div className="flex-1 mx-3 h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(selectedMatch.stats.shots[1] / (selectedMatch.stats.shots[0] + selectedMatch.stats.shots[1])) * 100}%` }}></div>
                     </div>
@@ -254,7 +253,7 @@ function Results() {
                     <div className="flex-1 mx-3 h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${(selectedMatch.stats.shotsOnTarget[0] / (selectedMatch.stats.shotsOnTarget[0] + selectedMatch.stats.shotsOnTarget[1])) * 100}%` }}></div>
                     </div>
-                    <div className="w-20 text-sm">On Target</div>
+                    <div className="w-20 text-sm">Cadrés</div>
                     <div className="flex-1 mx-3 h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(selectedMatch.stats.shotsOnTarget[1] / (selectedMatch.stats.shotsOnTarget[0] + selectedMatch.stats.shotsOnTarget[1])) * 100}%` }}></div>
                     </div>
@@ -278,7 +277,7 @@ function Results() {
                     <div className="flex-1 mx-3 h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${(selectedMatch.stats.fouls[0] / (selectedMatch.stats.fouls[0] + selectedMatch.stats.fouls[1])) * 100}%` }}></div>
                     </div>
-                    <div className="w-20 text-sm">Fouls</div>
+                    <div className="w-20 text-sm">Fautes</div>
                     <div className="flex-1 mx-3 h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(selectedMatch.stats.fouls[1] / (selectedMatch.stats.fouls[0] + selectedMatch.stats.fouls[1])) * 100}%` }}></div>
                     </div>
@@ -288,13 +287,13 @@ function Results() {
               </div>
             )} */}
             
-            {/* Goal scorers */}
+            {/* Buteurs */}
             {selectedMatch.goals.length > 0 && (
               <div className="mt-6">
-                <h4 className="text-base font-medium text-gray-700 mb-3 border-b pb-2">Goal Scorers</h4>
+                <h4 className="text-base font-medium text-gray-700 mb-3 border-b pb-2">Buteurs</h4>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Team A scorers */}
+                  {/* Buteurs équipe A */}
                   <div className="bg-emerald-50 p-4 rounded-lg">
                     <h5 className="font-medium text-emerald-800 mb-2">{selectedMatch.teamA}</h5>
                     <ul className="space-y-1">
@@ -304,17 +303,17 @@ function Results() {
                           <li key={`a-${idx}`} className="flex items-center">
                             <span className="font-medium text-gray-700">{goal.player}</span>
                             <span className="ml-auto bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded-full">
-                              ⚽ Scorer
+                              ⚽ Buteur
                             </span>
                           </li>
                         ))}
                       {selectedMatch.goals.filter(goal => goal.team === selectedMatch.teamA).length === 0 && (
-                        <li className="text-gray-500 text-sm">No goals</li>
+                        <li className="text-gray-500 text-sm">Aucun but</li>
                       )}
                     </ul>
                   </div>
                   
-                  {/* Team B scorers */}
+                  {/* Buteurs équipe B */}
                   <div className="bg-blue-50 p-4 rounded-lg">
                     <h5 className="font-medium text-blue-800 mb-2">{selectedMatch.teamB}</h5>
                     <ul className="space-y-1">
@@ -324,12 +323,12 @@ function Results() {
                           <li key={`b-${idx}`} className="flex items-center">
                             <span className="font-medium text-gray-700">{goal.player}</span>
                             <span className="ml-auto bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">
-                              ⚽ Scorer
+                              ⚽ Buteur
                             </span>
                           </li>
                         ))}
                       {selectedMatch.goals.filter(goal => goal.team === selectedMatch.teamB).length === 0 && (
-                        <li className="text-gray-500 text-sm">No goals</li>
+                        <li className="text-gray-500 text-sm">Aucun but</li>
                       )}
                     </ul>
                   </div>
@@ -339,7 +338,7 @@ function Results() {
           </div>
         </div>
       ) : (
-        // Results list view
+        // Vue liste des résultats
         <div className="bg-white rounded-lg shadow-md">
           <div className="divide-y divide-gray-100">
             {filteredResults.length > 0 ? (
@@ -354,7 +353,7 @@ function Results() {
                       {formatMatchDate(match.date)} • {formatMatchTime(match.date)}
                     </div>
                     <div className="text-xs bg-gray-100 rounded-full px-2 py-0.5">
-                      {match.stage} {match.group ? `• Group ${match.group}` : ''}
+                      {match.stage} {match.group ? `• Groupe ${match.group}` : ''}
                     </div>
                   </div>
 
@@ -367,7 +366,7 @@ function Results() {
                       <div className="font-bold text-xl">
                         {match.scoreA} - {match.scoreB}
                       </div>
-                      <div className="text-xs text-gray-500 mt-1">Final Score</div>
+                      <div className="text-xs text-gray-500 mt-1">Score Final</div>
                     </div>
                     
                     <div className="flex-1 text-left">
@@ -379,8 +378,8 @@ function Results() {
                     <span className="text-xs text-gray-500">
                       {match.location} • 
                       {match.goals.length === 0 
-                        ? ' No goals scored' 
-                        : ` ${match.goals.length} goal${match.goals.length > 1 ? 's' : ''}`}
+                        ? ' Aucun but marqué' 
+                        : ` ${match.goals.length} but${match.goals.length > 1 ? 's' : ''}`}
                     </span>
                   </div>
                 </div>
@@ -388,8 +387,8 @@ function Results() {
             ) : (
               <div className="p-8 text-center">
                 <div className="text-5xl mb-4">⚽</div>
-                <h3 className="text-xl font-medium text-gray-700">No matches found</h3>
-                <p className="text-gray-500 mt-2">There are no completed matches in this stage.</p>
+                <h3 className="text-xl font-medium text-gray-700">Aucun match trouvé</h3>
+                <p className="text-gray-500 mt-2">Il n'y a pas de matchs terminés dans cette phase.</p>
               </div>
             )}
           </div>

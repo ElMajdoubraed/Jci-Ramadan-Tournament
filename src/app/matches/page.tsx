@@ -4,21 +4,21 @@ import MatchList from './matchList';
 
 function Matches() {
   const startDate = new Date('2025-03-21');
-  const endDate = new Date('2025-03-29');
+  const endDate = new Date('2025-03-30');
 
-   // Generate dates array
+   // Génération du tableau des dates
    const dates: Date[] = [];
    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
      dates.push(new Date(d));
    }
   
-  // Initialize with today's date if within range, otherwise use startDate
+  // Initialisation avec la date d'aujourd'hui si dans la plage, sinon utiliser startDate
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  // Reference for the scrollable container
+  // Référence pour le conteneur défilable
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
-  // Set today's date on mount if within range and scroll to selected date
+  // Définir la date d'aujourd'hui au montage si dans la plage et faire défiler jusqu'à la date sélectionnée
   // useEffect(() => {
   //   const today = new Date();
   //   const todayTime = today.setHours(0, 0, 0, 0);
@@ -30,11 +30,11 @@ function Matches() {
   //   }
   // }, []);
   
-  // Scroll to selected date whenever it changes
+  // Faire défiler jusqu'à la date sélectionnée chaque fois qu'elle change
   useEffect(() => {
     if (!scrollContainerRef.current) return;
     
-    // Find the index of the selected date in our array
+    // Trouver l'index de la date sélectionnée dans notre tableau
     const selectedIndex = dates.findIndex(
       date => date.toDateString() === selectedDate.toDateString()
     );
@@ -47,19 +47,19 @@ function Matches() {
     
     if (!selectedButton) return;
     
-    // Calculate position to center the selected button
+    // Calculer la position pour centrer le bouton sélectionné
     const containerWidth = scrollContainer.clientWidth;
     const buttonWidth = selectedButton.offsetWidth;
     const scrollLeft = selectedButton.offsetLeft - (containerWidth / 2) + (buttonWidth / 2);
     
-    // Smooth scroll to the selected date
+    // Défilement fluide vers la date sélectionnée
     scrollContainer.scrollTo({
       left: Math.max(0, scrollLeft),
       behavior: 'smooth'
     });
   }, [selectedDate]);
   
-  // Format date for display
+  // Formater la date pour l'affichage
   const formatDate = (date: Date) => {
     const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
     const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
@@ -71,7 +71,7 @@ function Matches() {
     };
   };
 
-  // Navigation functions
+  // Fonctions de navigation
   const goToPrevious = () => {
     const prevDate = new Date(selectedDate);
     prevDate.setDate(prevDate.getDate() - 1);
@@ -84,7 +84,7 @@ function Matches() {
     if (nextDate <= endDate) setSelectedDate(nextDate);
   };
 
-  // Check if date is today
+  // Vérifier si la date est aujourd'hui
   const isToday = (date: Date) => {
     const today = new Date();
     return date.getDate() === today.getDate() &&

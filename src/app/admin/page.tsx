@@ -18,14 +18,14 @@ export default function AdminPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user is logged in
+    // Vérifier si l'utilisateur est connecté
     const isLoggedIn = localStorage.getItem('isAdminLoggedIn');
     if (isLoggedIn !== 'true') {
       router.push('/login');
       return;
     }
 
-    // Fetch data
+    // Récupérer les données
     fetchTeams();
     fetchMatches();
   }, [router]);
@@ -38,7 +38,7 @@ export default function AdminPage() {
         setTeams(data);
       }
     } catch (error) {
-      console.error('Error fetching teams:', error);
+      console.error('Erreur lors de la récupération des équipes:', error);
     } finally {
       setLoading(false);
     }
@@ -52,7 +52,7 @@ export default function AdminPage() {
         setMatches(data);
       }
     } catch (error) {
-      console.error('Error fetching matches:', error);
+      console.error('Erreur lors de la récupération des matchs:', error);
     }
   };
 
@@ -66,7 +66,7 @@ export default function AdminPage() {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           </div>
-          <p className="text-xl font-medium text-indigo-800">Loading tournament data...</p>
+          <p className="text-xl font-medium text-indigo-800">Chargement des données du tournoi...</p>
         </div>
       </div>
     );
@@ -78,7 +78,7 @@ export default function AdminPage() {
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Ramadan Tournament Admin
+              Administration du Tournoi de Ramadan
             </h1>
             <div className="hidden sm:block">
               <button 
@@ -92,7 +92,7 @@ export default function AdminPage() {
                   <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V7.414a1 1 0 00-.293-.707L11.414 2.414A1 1 0 0010.707 2H4a1 1 0 00-1 1zm9 2.5V5a1 1 0 01-1-1V3.5L13.5 6H12.5z" clipRule="evenodd" />
                   <path d="M3 8h11v1H3z" />
                 </svg>
-                Logout
+                Déconnexion
               </button>
             </div>
           </div>
@@ -100,7 +100,7 @@ export default function AdminPage() {
       </header>
 
       <main className="mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
-        {/* Stats Overview */}
+        {/* Aperçu des statistiques */}
         <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
           <div className="overflow-hidden rounded-xl bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-indigo-100">
             <div className="flex items-center">
@@ -110,7 +110,7 @@ export default function AdminPage() {
                 </svg>
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-gray-700">Total Teams</h2>
+                <h2 className="text-lg font-semibold text-gray-700">Total des Équipes</h2>
                 <p className="mt-2 text-3xl font-bold text-indigo-600">{teams.length}</p>
               </div>
             </div>
@@ -124,7 +124,7 @@ export default function AdminPage() {
                 </svg>
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-gray-700">Total Matches</h2>
+                <h2 className="text-lg font-semibold text-gray-700">Total des Matchs</h2>
                 <p className="mt-2 text-3xl font-bold text-purple-600">{matches.length}</p>
               </div>
             </div>
@@ -132,7 +132,7 @@ export default function AdminPage() {
           
           <div className="overflow-hidden rounded-xl bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-indigo-100">
             <div className="flex flex-col h-full justify-between">
-              <h2 className="text-lg font-semibold text-gray-700 mb-4">Quick Actions</h2>
+              <h2 className="text-lg font-semibold text-gray-700 mb-4">Actions Rapides</h2>
               <div className="flex flex-wrap gap-2">
                 <button 
                   onClick={() => setActiveTab('teams')}
@@ -141,7 +141,7 @@ export default function AdminPage() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
                   </svg>
-                  Manage Teams
+                  Gérer les Équipes
                 </button>
                 <button 
                   onClick={() => setActiveTab('matches')}
@@ -150,7 +150,7 @@ export default function AdminPage() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                   </svg>
-                  Manage Matches
+                  Gérer les Matchs
                 </button>
                 <button 
                   onClick={() => window.open('/standings', '_blank')}
@@ -159,14 +159,14 @@ export default function AdminPage() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
                   </svg>
-                  View Standings
+                  Voir le Classement
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Tab Navigation */}
+        {/* Navigation par onglets */}
         <div className="mb-6 border-b border-gray-200">
           <nav className="-mb-px flex space-x-8">
             <button
@@ -181,7 +181,7 @@ export default function AdminPage() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
                 </svg>
-                Teams Management
+                Gestion des Équipes
               </div>
             </button>
             <button
@@ -196,13 +196,13 @@ export default function AdminPage() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                 </svg>
-                Matches Management
+                Gestion des Matchs
               </div>
             </button>
           </nav>
         </div>
 
-        {/* Content based on active tab */}
+        {/* Contenu basé sur l'onglet actif */}
         <div className="space-y-6">
           {activeTab === 'teams' && (
             <>
@@ -218,10 +218,10 @@ export default function AdminPage() {
             </>
           )}
           
-          {/* Reset Stats Component - Always visible */}
+          {/* Composant de réinitialisation des statistiques - Toujours visible */}
           <div className="mt-10 pt-6 border-t border-gray-200">
             <h2 className="text-lg font-bold text-gray-900 mb-6">
-              Advanced Administration
+              Administration Avancée
             </h2>
             <ResetStatsComponent onComplete={() => {
               fetchTeams();

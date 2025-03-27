@@ -61,30 +61,30 @@ export default function AddTeamComponent({ onTeamAdded }: AddTeamProps) {
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
               <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
             </svg>
-            Add New Team
+            Ajouter Nouvelle Équipe
           </span>
         </button>
       ) : (
         <div className="rounded-xl border-2 border-indigo-100 bg-white p-6 shadow-2xl transition-all duration-300 hover:shadow-indigo-100">
-          <h3 className="mb-6 text-2xl font-bold text-gradient bg-gradient-to-r from-indigo-600 to-purple-600 inline-block text-transparent bg-clip-text">Register New Team</h3>
+          <h3 className="mb-6 text-2xl font-bold text-gradient bg-gradient-to-r from-indigo-600 to-purple-600 inline-block text-transparent bg-clip-text">Inscrire Nouvelle Équipe</h3>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="group transition-all duration-200">
-              <label className="mb-2 block text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors duration-200">Team Name</label>
+              <label className="mb-2 block text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors duration-200">Nom de l'Équipe</label>
               <div className="relative rounded-md shadow-sm">
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full rounded-lg border border-gray-300 pl-10 p-3 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all duration-200 text-gray-800"
-                  placeholder="Enter team name"
+                  placeholder="Entrez le nom de l'équipe"
                   required
                 />
               </div>
             </div>
             
             <div className="group transition-all duration-200">
-              <label className="mb-2 block text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors duration-200">Tournament Group</label>
+              <label className="mb-2 block text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors duration-200">Groupe du Tournoi</label>
               <div className="relative rounded-md shadow-sm">
                 <select
                   value={group}
@@ -94,7 +94,7 @@ export default function AddTeamComponent({ onTeamAdded }: AddTeamProps) {
                 >
                   {Object.values(TeamGroup).map((g) => (
                     <option key={g} value={g}>
-                      Group {g}
+                      Groupe {g}
                     </option>
                   ))}
                 </select>
@@ -107,14 +107,14 @@ export default function AddTeamComponent({ onTeamAdded }: AddTeamProps) {
             </div>
             
             <div className="group transition-all duration-200">
-              <label className="mb-2 block text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors duration-200">Captain Name</label>
+              <label className="mb-2 block text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors duration-200">Nom du Capitaine</label>
               <div className="relative rounded-md shadow-sm">
                 <input
                   type="text"
                   value={captainName}
                   onChange={(e) => setCaptainName(e.target.value)}
                   className="w-full rounded-lg border border-gray-300 pl-10 p-3 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all duration-200 text-gray-800"
-                  placeholder="Enter captain name"
+                  placeholder="Entrez le nom du capitaine"
                   required
                 />
               </div>
@@ -132,14 +132,14 @@ export default function AddTeamComponent({ onTeamAdded }: AddTeamProps) {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Registering...
+                    Inscription en cours...
                   </span>
                 ) : (
                   <span className="flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    Register Team
+                    Inscrire l'Équipe
                   </span>
                 )}
               </button>
@@ -152,7 +152,7 @@ export default function AddTeamComponent({ onTeamAdded }: AddTeamProps) {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
-                  Cancel
+                  Annuler
                 </span>
               </button>
             </div>

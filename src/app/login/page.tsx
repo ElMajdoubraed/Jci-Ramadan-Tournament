@@ -9,7 +9,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  // Check if user is already logged in
+  // Vérifier si l'utilisateur est déjà connecté
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isAdminLoggedIn');
     if (isLoggedIn === 'true') {
@@ -21,16 +21,16 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
 
-    // Hardcoded credentials from environment variables
+    // Identifiants codés en dur à partir des variables d'environnement
     const adminUsername = process.env.NEXT_PUBLIC_ADMIN_USERNAME;
     const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
 
     if (username === adminUsername && password === adminPassword) {
-      // Store auth state in localStorage
+      // Stocker l'état d'authentification dans localStorage
       localStorage.setItem('isAdminLoggedIn', 'true');
       router.push('/admin');
     } else {
-      setError('Invalid username or password');
+      setError('Nom d\'utilisateur ou mot de passe invalide');
     }
   };
 
@@ -38,8 +38,8 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
-          <p className="text-gray-600">Ramadan Tournament</p>
+          <h1 className="text-2xl font-bold text-gray-900">Connexion Admin</h1>
+          <p className="text-gray-600">Tournoi de Ramadan</p>
         </div>
 
         {error && (
@@ -54,7 +54,7 @@ export default function LoginPage() {
               htmlFor="username" 
               className="mb-2 block text-sm font-medium text-gray-700"
             >
-              Username
+              Nom d'utilisateur
             </label>
             <input
               id="username"
@@ -71,7 +71,7 @@ export default function LoginPage() {
               htmlFor="password" 
               className="mb-2 block text-sm font-medium text-gray-700"
             >
-              Password
+              Mot de passe
             </label>
             <input
               id="password"
@@ -87,7 +87,7 @@ export default function LoginPage() {
             type="submit"
             className="w-full rounded-md bg-blue-600 py-2 px-4 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            Login
+            Connexion
           </button>
         </form>
       </div>

@@ -19,30 +19,30 @@ export default function MatchList({ date, stage, showDate = false }: MatchListPr
     const fetchMatches = async () => {
       try {
         setLoading(true);
-        // Format date as ISO string and pass as query parameter
+        // Formater la date en chaîne ISO et la passer comme paramètre de requête
         const formattedDate = date.toISOString().split('T')[0];
         const request = stage ? `/api/matches?stage=${stage}` : `/api/matches?date=${formattedDate}`;
         const response = await fetch(request);
         
         if (!response.ok) {
-          throw new Error('Failed to fetch matches');
+          throw new Error('Échec de la récupération des matchs');
         }
         
         const data = await response.json();
         setMatches(data);
         setError(null);
       } catch (err) {
-        console.error('Error fetching matches:', err);
-        setError('Failed to load matches. Please try again later.');
+        console.error('Erreur lors de la récupération des matchs:', err);
+        setError('Impossible de charger les matchs. Veuillez réessayer plus tard.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchMatches();
-  }, [date]);
+  }, [date, stage]);
 
-  // Check if there are matches on the selected date
+  // Vérifier s'il y a des matchs à la date sélectionnée
   const hasMatches = matches.length > 0;
 
   if (loading) {
@@ -98,7 +98,7 @@ export default function MatchList({ date, stage, showDate = false }: MatchListPr
                       {/* {teamA.image ? (
                         <img 
                           src={teamA.image} 
-                          alt={`${teamA.name} flag`} 
+                          alt={`Drapeau de ${teamA.name}`} 
                           className="w-full h-full object-cover rounded-full"
                         />
                       ) : (
@@ -122,7 +122,7 @@ export default function MatchList({ date, stage, showDate = false }: MatchListPr
                       {/* {teamB.image ? (
                         <img 
                           src={teamB.image} 
-                          alt={`${teamB.name} flag`} 
+                          alt={`Drapeau de ${teamB.name}`} 
                           className="w-full h-full object-cover rounded-full"
                         />
                       ) : (

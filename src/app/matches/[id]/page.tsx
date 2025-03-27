@@ -32,16 +32,16 @@ function MatchDetail() {
         
         if (!response.ok) {
           if (response.status === 404) {
-            throw new Error('Match not found');
+            throw new Error('Match non trouvé');
           }
-          throw new Error('Failed to fetch match details');
+          throw new Error('Échec de la récupération des détails du match');
         }
         
         const data = await response.json();
         setMatch(data);
       } catch (err: any) {
-        console.error('Error fetching match:', err);
-        setError(err.message || 'Failed to load match details');
+        console.error('Erreur lors de la récupération du match:', err);
+        setError(err.message || 'Échec du chargement des détails du match');
       } finally {
         setLoading(false);
       }
@@ -52,18 +52,18 @@ function MatchDetail() {
     }
   }, [id]);
 
-  // Count goals for each player when match data changes
+  // Compter les buts pour chaque joueur lorsque les données du match changent
   useEffect(() => {
     if (!match) return;
     
-    // Count Team A goals
+    // Compter les buts de l'équipe A
     const aGoalCounts: Record<string, number> = {};
     match.teamAPlayerGoals.forEach(player => {
       aGoalCounts[player] = (aGoalCounts[player] || 0) + 1;
     });
     setTeamAGoalCounts(aGoalCounts);
     
-    // Count Team B goals
+    // Compter les buts de l'équipe B
     const bGoalCounts: Record<string, number> = {};
     match.teamBPlayerGoals.forEach(player => {
       bGoalCounts[player] = (bGoalCounts[player] || 0) + 1;
@@ -87,7 +87,7 @@ function MatchDetail() {
           href="/"
           className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-md transition-colors"
         >
-          Return to Matches
+          Retour aux Matchs
         </Link>
       </div>
     );
@@ -98,11 +98,11 @@ function MatchDetail() {
   const teamA = match.teamA as ITeam;
   const teamB = match.teamB as ITeam;
 
-  // Get unique player names for each team (no duplicates)
+  // Obtenir les noms uniques des joueurs pour chaque équipe (sans doublons)
   const teamAScorers = Array.from(new Set(match.teamAPlayerGoals));
   const teamBScorers = Array.from(new Set(match.teamBPlayerGoals));
   
-  // Function to render goal indicator
+  // Fonction pour afficher l'indicateur de buts
   const renderGoalCount = (count: number) => {
     if (count === 1) return null;
     
@@ -137,7 +137,7 @@ function MatchDetail() {
       </Link>
 
       <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-        {/* Match header */}
+        {/* En-tête du match */}
         <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 p-6 text-white">
           <div className="text-center mb-3 text-emerald-50 font-medium">
             {new Date(match.date).toLocaleDateString('fr-FR', { weekday: 'long', month: 'long', day: 'numeric' })} • {match.time}
@@ -173,7 +173,7 @@ function MatchDetail() {
           </div>
         </div>
         
-        {/* Match details */}
+        {/* Détails du match */}
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold text-gray-700">Buteurs</h2>
@@ -186,7 +186,7 @@ function MatchDetail() {
             {(match.status === MatchStatus.FINISHED || match.status === MatchStatus.LIVE) && 
              (teamAScorers.length > 0 || teamBScorers.length > 0) ? (
               <div className="flex flex-col gap-6">
-                {/* Team A scorers */}
+                {/* Buteurs de l'équipe A */}
                 {teamAScorers.length > 0 && (
                   <div className="bg-emerald-50 p-4 rounded-lg">
                     <h3 className="font-medium text-emerald-800 mb-2 flex items-center">
@@ -217,7 +217,7 @@ function MatchDetail() {
                   </div>
                 )}
                 
-                {/* Team B scorers */}
+                {/* Buteurs de l'équipe B */}
                 {teamBScorers.length > 0 && (
                   <div className="bg-indigo-50 p-4 rounded-lg">
                     <h3 className="font-medium text-indigo-800 mb-2 flex items-center">
