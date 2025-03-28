@@ -16,7 +16,6 @@ export async function GET(request: NextRequest) {
     // If date is provided, filter by that date
     if (date) {
       const formattedDate = new Date(date).toISOString()
-      console.log('formattedDate:', formattedDate);
       query = { date: formattedDate };
     } else if (stage) {
       let phase = stage;

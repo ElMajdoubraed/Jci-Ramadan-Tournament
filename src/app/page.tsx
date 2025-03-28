@@ -4,20 +4,31 @@ import MatchesComponent from './matches/page';
 import StandingsComponent from './standings/page';
 import AllTeamsComponent from './teams/page';
 import ResultsComponent from './results/page';
+import { 
+  Header, 
+  SponsorBanner, 
+  Navigation, 
+  SponsorFooter, 
+  Footer,
+  TabContent
+} from '@/components/layout';
 
+// Tab configuration
 const tabs = [
-  { name: 'Matchs', component: Matches, icon: '⚽' },
-  { name: 'Classements', component: Standings, icon: '🏆' },
-  { name: 'Équipes', component: Teams, icon: '👥' },
-  { name: 'Résultats', component: Results, icon: '📊' },
+  { name: 'Matchs', component: MatchesComponent, icon: '⚽' },
+  { name: 'Classements', component: StandingsComponent, icon: '🏆' },
+  { name: 'Équipes', component: AllTeamsComponent, icon: '👥' },
+  { name: 'Résultats', component: ResultsComponent, icon: '📊' },
 ];
 
-function App() {
+export default function App() {
   const [activeTab, setActiveTab] = useState('Matchs');
   const [animationClass, setAnimationClass] = useState('');
-  const ActiveComponent = tabs.find((tab) => tab.name === activeTab)?.component || Matches;
+  
+  // Find the active component based on tab selection
+  const ActiveComponent = tabs.find((tab) => tab.name === activeTab)?.component || tabs[0].component;
 
-  // Add an animation class when tab changes
+  // Add animation when tab changes
   useEffect(() => {
     setAnimationClass('page-transition-enter');
     const timer = setTimeout(() => {
@@ -26,89 +37,46 @@ function App() {
     return () => clearTimeout(timer);
   }, [activeTab]);
 
+  // Render tab content with title and subtitle if needed
+  const renderTabContent = () => {
+    if (activeTab === 'Résultats') {
+      return (
+        <TabContent 
+          title="Résultats des Matchs"
+          subtitle="Historique complet des résultats des matchs"
+        >
+          <ResultsComponent />
+        </TabContent>
+      );
+    }
+    
+    return (
+      <TabContent>
+        <ActiveComponent />
+      </TabContent>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50 text-gray-800 p-4 md:p-8 animate__animated animate__fadeIn animate__faster">
-      <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-xl overflow-hidden border border-emerald-100 animate__animated animate__fadeInUp animate__fast">
-        <header className="p-6 bg-gradient-to-r from-emerald-600 to-sky-600 text-white">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold flex items-center animate__animated animate__bounceIn">
-              <span className="mr-3 bg-white text-emerald-600 w-10 h-10 rounded-full flex items-center justify-center shadow-md float-animation glow-effect">
-                ⚽
-              </span>
-              <span>
-                <span className="text-amber-300">JCI</span> Tournoi Ramadan
-              </span>
-            </h1>
-            <div className="text-white text-opacity-80 text-sm hidden md:block animate__animated animate__fadeIn animate__delay-05s">Ramadan 2025</div>
-          </div>
-        </header>
-        
-        <nav className="flex flex-wrap bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10 animate__animated animate__fadeIn animate__delay-03s">
-          {tabs.map((tab, index) => (
-            <button
-              key={tab.name}
-              className={`flex-1 px-4 py-3 cursor-pointer transition-all duration-200 text-center md:text-base text-sm font-medium animate__animated animate__fadeInDown
-                ${activeTab === tab.name 
-                  ? 'bg-emerald-50 text-emerald-700 border-b-2 border-emerald-500' 
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-emerald-600'}`}
-              onClick={() => setActiveTab(tab.name)}
-            >
-              <div className="flex flex-col md:flex-row items-center justify-center md:space-x-2">
-                <span className={`text-xl mb-1 md:mb-0 ${activeTab === tab.name ? 'animate__animated animate__pulse animate__infinite animate__slow' : ''}`}>{tab.icon}</span>
-                <span>{tab.name}</span>
-              </div>
-            </button>
-          ))}
-        </nav>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-50 text-gray-800 p-4 md:p-8">
+      <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-xl overflow-hidden border border-emerald-100">
+        <Header />
+        <SponsorBanner />
+        <Navigation 
+          tabs={tabs} 
+          activeTab={activeTab} 
+          onTabChange={setActiveTab} 
+        />
         
         <main className="p-0 sm:p-6 bg-white min-h-[60vh]">
           <div className={`bg-white rounded-lg p-0 sm:p-2 ${animationClass}`} key={activeTab}>
-            <ActiveComponent />
+            {renderTabContent()}
           </div>
         </main>
         
-        <footer className="p-4 text-center text-sm text-gray-500 bg-gray-50 border-t border-gray-100 animate__animated animate__fadeIn animate__delay-05s">
-          © 2025 Tournoi de Football Ramadan JCI. Tous droits réservés.
-        </footer>
+        <SponsorFooter />
+        <Footer />
       </div>
     </div>
   );
 }
-
-function Matches() {
-  return (
-    <div className="text-center p-4">
-      <MatchesComponent />
-    </div>
-  );
-}
-
-function Standings() {
-  return (
-    <div className="text-center p-4">
-      <StandingsComponent />
-    </div>
-  );
-}
-
-function Teams() {
-  return (
-    <div className="text-center p-4">
-      <AllTeamsComponent />
-    </div>
-  );
-}
-
-function Results() {
-  return (
-    <div className="text-center p-4">
-      <div className="mb-6 animate__animated animate__fadeInDown animate__faster">
-        <h2 className="text-2xl font-bold text-emerald-700 mb-2">Résultats des Matchs</h2>
-        <p className="text-gray-600">Historique complet des résultats des matchs</p>
-      </div>
-      <ResultsComponent />
-    </div>
-  );
-}
-
-export default App;

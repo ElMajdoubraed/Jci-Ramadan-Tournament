@@ -4,7 +4,7 @@ import GroupStage from './groupStage';
 import FinalStage from './finaleStage';
 
 function Standings() {
-  const [activeStage, setActiveStage] = useState('Group Stage');
+  const [activeStage, setActiveStage] = useState('Final Stage');
   
   const stages = [
     { id: 'Group Stage', name: 'Phase de Groupes', icon: '👥' },
