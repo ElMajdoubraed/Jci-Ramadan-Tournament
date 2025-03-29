@@ -10,7 +10,7 @@ function FinalStage() {
     { id: 'Final', key:'final', name: 'Finale', emoji: '🏆' }
   ];
   
-  const [activeFinalStage, setActiveFinalStage] = useState('Quarterfinals');
+  const [activeFinalStage, setActiveFinalStage] = useState('Semifinals');
   
   // Fonction pour déterminer si une phase est terminée
   const isStageCompleted = (stageId: string) => {
