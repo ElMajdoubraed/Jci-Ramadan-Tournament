@@ -4,8 +4,8 @@ import { DateSelector, DateNavigation } from '@/components/matches';
 import MatchList from '@/components/matches/MatchList';
 
 export default function Matches() {
-  const startDate = new Date('2025-03-21');
-  const endDate = new Date('2025-03-30');
+  const startDate = new Date('2026-03-11');
+  const endDate = new Date('2026-03-19');
 
   // Generate date array
   const dates: Date[] = [];
